@@ -1,0 +1,24 @@
+{
+  "name": "multi-snake",
+  "version": "1.0.0",
+  "description": "A multiplayer snake game",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.13.3",
+    "socket.io": "^1.3.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arizqi13/multi-snake.git"
+  },
+  "author": "Alfian Rizqi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arizqi13/multi-snake/issues"
+  },
+  "homepage": "https://github.com/arizqi13/multi-snake#readme"
+}
