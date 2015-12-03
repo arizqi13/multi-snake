@@ -6,10 +6,10 @@
 // })();
 
 var socket = io();
-var canvas = $('#canvas')[0];
+var canvas = document.getElementById('gameField');
 var context = canvas.getContext('2d');
 
-document.onkeypress = function(e){
+$(document).keypress(function(e){
 	var charCode = (e.which) ? e.which : e.keyCode;
 	if(charCode === 38 || charCode === 87) {
 	// Up arrow
@@ -27,7 +27,12 @@ document.onkeypress = function(e){
 	// Not a control key
 	}
 	return false;
-};
+});
+
+var nickName = "";
+socket.on('nick name', function(nn){
+	nickName = nn;
+})
 
 socket.on('incoming data', function(data){
 // Do something with the received data

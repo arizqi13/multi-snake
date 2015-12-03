@@ -5,17 +5,9 @@
 		<link rel="stylesheet" type="text/css" href="game.css">
 	</head>
 	<body>
-		<div>
-			<p>
-				<form id="userInput" action="/game.html">
-					<input id="nickName" type="text" placeholder="Your desired nickName">
-					<br>
-					<input type="submit" value="Join!">
-				</form>
-			</p>
-		</div>
+		<canvas id="gameField"></canvas>
 		<script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
     	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-		<script src="clientIndex.js"></script>
+		<script src="game.js"></script>
 	</body>
 </html>
