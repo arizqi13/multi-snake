@@ -9,6 +9,10 @@ var socket = io();
 var canvas = document.getElementById('gameField');
 var context = canvas.getContext('2d');
 
+$(document).onload(function(){
+	socket.emit('hello');
+})
+
 $(document).keypress(function(e){
 	var charCode = (e.which) ? e.which : e.keyCode;
 	if(charCode === 38 || charCode === 87) {
