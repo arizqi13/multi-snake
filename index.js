@@ -5,6 +5,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 app.use(express.static('public'));
 
+
 // Sample Json format
 // var myJson = {"players": [
 // 	{"id": "", "nickname" : "nickname", "color" : "color", "coordinate":[1,2,3]},
@@ -17,6 +18,7 @@ var userArray = new Array(5);
 var currentCoord = [0,0];
 var tempNick;
 var tempID;
+
 
 http.listen(port, function(){
   	console.log('listening on *:'+port);
@@ -88,9 +90,6 @@ io.on('connection', function(socket){
 	});
 });
 
-function findCoordinate(){
-	return [0,0];
-}
 
 // Go through all snakes and check if it hits the wall
 function wallCollision() {
@@ -108,4 +107,33 @@ function wallCollision() {
 			gameOver(player.id);
 		}
 	}
+}
+
+// Finds a coordinate position not currently
+// occupied by a player's snake and returns it as an object
+// with an x and y field
+function findOpenSquare() {
+	// TODO: the global variables maxX maxY and board might
+	// have been changed since this was written. Also maxX/maxY
+	// is a value that does exist in the board, not one past the edge
+	while (true) {
+		var potentialCoord = {
+			x:randInt(maxX + 1);
+			y:randInt(maxY + 1);
+		}
+		var str = buildCoordinateString(x, y);
+		if (board.str == undefined) {
+			return potentialCoord;
+		}
+	}
+}
+
+
+// returns random int between 0 (included) and max (excluded)
+function randInt(maximumInt) {
+	return Math.floor(Math.random() * (maximumInt);
+}
+
+function buildCoordinateString(x, y) {
+	return "(" + x + "," + y ")";
 }
