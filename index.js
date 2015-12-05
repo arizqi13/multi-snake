@@ -137,28 +137,46 @@ function wallCollision() {
 // Finds a coordinate position not currently
 // occupied by a player's snake and returns it as an object
 // with an x and y field
-function findOpenSquare() {
+function findOpenSquare(minimumX, maximumX, minimumY, minimumX) {
 	// TODO: the global variables maxX maxY and board might
 	// have been changed since this was written. Also maxX/maxY
 	// is a value that does exist in the board, not one past the edge
 	while (true) {
-		var potentialCoord = {
-			x:randInt(maxX + 1);
-			y:randInt(maxY + 1);
-		}
-		var str = buildCoordinateString(x, y);
-		if (board.str == undefined) {
-			return potentialCoord;
+		var potentialX = randInt(minimumX, maximumX);
+		var potentialY = randInt(minimumX, maximumY);
+		if (isOpen(potentialX, potentialY)) {
+			var openSquare = {
+				x:potentialX;
+				y:potentialY;
+			}
+			return openSquare;
 		}
 	}
 }
 
+// Tests if the coordinates (xval,yval) are occupied by a snake
+// note that this does not test agains the food
+function isOpen(xval, yval) {
+	var testThisCoord = {
+		x:xval;
+		y:yval;
+	}
+	var str = JSON.stringify(testThisCoord);
+	if (board[str] == undefined || board[str].length == 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
-// returns random int between 0 (included) and max (excluded)
-function randInt(maximumInt) {
-	return Math.floor(Math.random() * (maximumInt);
+// returns random int between minimum (included) and max (included)
+function randInt(minimumInt, maximumInt) {
+	return Math.floor(Math.random() * (maximumInt + 1 - minimumInt) + minimumInt);
 }
 
 function buildCoordinateString(x, y) {
 	return "(" + x + "," + y ")";
 }
+
+
+
