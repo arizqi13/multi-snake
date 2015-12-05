@@ -91,3 +91,21 @@ io.on('connection', function(socket){
 function findCoordinate(){
 	return [0,0];
 }
+
+// Go through all snakes and check if it hits the wall
+function wallCollision() {
+	var all = myJson.players;
+
+	for (var i = 0; i < all.length; i++) {
+		var player = all[i].coordinate;
+		var head = player[0];
+
+		// rg = right most grid
+		// bg = bottom grid
+		// TODO: replace rg and bg with correct variable
+		// TODO: replace gameOver call with the correct function
+		if (head.x == -1 || head.x == rg || head.y == -1 || head.y == bg) {
+			gameOver(player.id);
+		}
+	}
+}
