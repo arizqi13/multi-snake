@@ -88,7 +88,31 @@ io.on('connection', function(socket){
 	});
 });
 
+/////////////////////////////////////////////////////////
+// Alfian's space
 
+function collision() {
+	var all = myJson.players;
+
+	var player;
+	for (player in all) {
+		var body = player.coordinate;
+		var head = body[0];
+
+		// rg = right most grid
+		// bg = bottom grid
+		// TODO: replace rg and bg with correct variable
+		// TODO: replace gameOver call with the correct function
+		if (head.x == -1 || head.x == rg || head.y == -1 || head.y == bg) {
+			gameOver(player.id);
+			continue;
+		}
+
+		var headLocation = 
+	}	
+}
+
+// TODO: remove this function. right now this is just to separated code writing
 // Go through all snakes and check if it hits the wall
 function wallCollision() {
 	var all = myJson.players;
@@ -106,6 +130,9 @@ function wallCollision() {
 		}
 	}
 }
+
+//////////////////////////////////////////////////////////
+// Tad's space
 
 // Finds a coordinate position not currently
 // occupied by a player's snake and returns it as an object
