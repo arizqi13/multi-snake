@@ -5,6 +5,9 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 app.use(express.static('public'));
 
+var MAX_NUM_USER = 5;
+var MAX_WIDTH = 500;
+var MAX_HEIGHT = 500;
 
 // Sample Json format
 // var myJson = {"players": {
@@ -12,12 +15,14 @@ app.use(express.static('public'));
 // 	"id2": {"nickname" : "nickname", "color" : "color", "coordinate":[[1,0], ], "direction":"left"}
 // 	}
 // };
+var clientSockets = [];
 var myJson = {"players": []};
-var colors = ["black","red","yellow","green","blue"];
-var totalUsers = 0;
-var userArray = new Array(5);
+var availableColors = ["black","red","yellow","green","blue"];
+var colorInUsed = [];
+var userArray = new Array();
 var currentCoord = [0,0];
 var tempNick;
+var tempColorIndex;
 var tempID;
 
 
@@ -38,40 +43,30 @@ app.get('/game.html', function(req, res) {
 });
 
 
-io.on('connection', function(socket){
-	console.log('a user connected');
-
+io.sockets.on('connection', function(socket){
+	clientSockets.push(socket);
+	console.log('connected to client:' + socket.id);
+	tempID = socket.id;
 	// Assign an id for the new user
 	socket.on('join', function(){
 		// Assign user an id
-		if(totalUsers < 5 && totalUsers >= 0){
-			for(var i=0; i<userArray.length;i++){
-				if(userArray[i] === undefined || userArray[i] === 0){
-					tempID = i;
-					userArray[i] = 1;
-					break;
-				}					
-			}
-		// find the good coordinate for the new snake
-		var newCoord = findCoordinate();
-		// Create the player data and add it to the Json
-		var tempJson = {};
-		tempJson.id = tempID;
-		tempJson.nickname = tempNick;
-		tempJson.color = colors[tempID];
-		tempJson.coordinate = newCoord;
-		tempJson.direction = "";
-		// var tempJson = '{"id": '+tempID+', "nickname" : "'+tempNick+'", "color" : "'+colors[tempID]+'", "coordinate":'+newCoord+'}';
-		myJson.players.push(JSON.stringify(tempJson));
-		console.log("Create new users: \n\t"+JSON.stringify(tempJson));
-		} else {
-			// User can not play
+		var totalUsers = userArray.length;
+		if(totalUsers < MAX_NUM_USER && totalUsers >= 0){
+			// Find the good coordinate for the new snake
+			// Create the player data and add it to the Json
+			userArray.push(tempID);
+			var tempJson = {};
+			tempJson.id = tempID;
+			tempJson.nickname = tempNick;
+			tempJson.color = pickColor();
+			tempJson.coordinate = findCoordinate();
+			tempJson.direction = "";
 
+			myJson.players.push(JSON.stringify(tempJson));
+			console.log("Create new users: \n\t"+JSON.stringify(tempJson));
 		}
-		// Send initial data
-		// When user load game.html
-		io.emit('incoming data', currentCoord);
-		io.emit('data',myJson);
+		// Send game state data to clients
+		io.emit('incoming data', myJson);
 	});
 
 	// Receiving new key press from the client
@@ -84,9 +79,32 @@ io.on('connection', function(socket){
 			userJson.direction === direction;
 		}
 		// io.emit('incoming data', currentCoord);
-		console.log('update client data');
+		console.log('updated client data');
 	});
+
+	// When the user disconnect
+	socket.on('disconnect', function(){
+		var socketIndex = clientSockets.indexOf(socket);
+		clientSockets.splice(i,1);
+    	console.log('disconnect user: ' + socket.id);
+    	gameOver(socket.id);
+  });
 });
+
+function pickColor(){
+	if(availableColors.length > 0){
+		var i = randInt(-1,availableColors.length-1);
+		var color = availableColors[i];
+		availableColors.splice(i,1);
+		colorInUsed.push(color);
+		return color;
+	}
+	return "red";
+}
+
+//TODO:
+//Movement, and broadcast data to clients every 60 ms
+
 
 /////////////////////////////////////////////////////////
 // Alfian's space
