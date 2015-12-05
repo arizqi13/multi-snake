@@ -19,18 +19,24 @@ $(document).ready(function(){
 $(document).keydown(function(e){
 	var charCode = (e.which) ? e.which : e.keyCode;
 	if(id != undefined && nickName != undefined){
+		var data = {};
+		data.id = id;
 		if(charCode === 38 || charCode === 87) {
 		// Up arrow
-			socket.emit('key','up');
+			data.direction = 'up';
+			socket.emit('key',data);
 		} else if(charCode === 40 || charCode === 83) {
 		// Down arrow
-			socket.emit('key','down');
+			data.direction = 'down';
+			socket.emit('key',data);
 		} else if(charCode === 39 || charCode === 68) {
 		// Right arrow
-			socket.emit('key','right');
+			data.direction = 'right';
+			socket.emit('key',data);
 		} else if(charCode === 37 || charCode === 65) {
 		// Left arrow
-			socket.emit('key','left');
+			data.direction = 'left';
+			socket.emit('key',data);
 		} else {
 		// Not a control key
 		}
@@ -38,7 +44,7 @@ $(document).keydown(function(e){
 	return false;
 });
 
-socket.on('data', function(data){
+socket.on('incoming data', function(data){
 	for(var i in data.players){
 		var player = JSON.parse(data.players[i]);
 		nickName = player.nickname;

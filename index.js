@@ -7,10 +7,11 @@ app.use(express.static('public'));
 
 
 // Sample Json format
-// var myJson = {"players": [
-// 	{"id": "", "nickname" : "nickname", "color" : "color", "coordinate":[1,2,3]},
-// 	{"id": "", "nickname" : "nickname", "color" : "color", "coordinate":[1,2,3]}
-// ]};
+// var myJson = {"players": {
+// 	"id1": {nickname" : "nickname", "color" : "color", "coordinate":[[0,0],[0,1],[0,2]], "direction":"up"},
+// 	"id2": {"nickname" : "nickname", "color" : "color", "coordinate":[[1,0], ], "direction":"left"}
+// 	}
+// };
 var myJson = {"players": []};
 var colors = ["black","red","yellow","green","blue"];
 var totalUsers = 0;
@@ -52,14 +53,14 @@ io.on('connection', function(socket){
 				}					
 			}
 		// find the good coordinate for the new snake
-		var newCoord = [];
-		newCoord[0] = findCoordinate();
+		var newCoord = findCoordinate();
 		// Create the player data and add it to the Json
 		var tempJson = {};
 		tempJson.id = tempID;
 		tempJson.nickname = tempNick;
 		tempJson.color = colors[tempID];
 		tempJson.coordinate = newCoord;
+		tempJson.direction = "";
 		// var tempJson = '{"id": '+tempID+', "nickname" : "'+tempNick+'", "color" : "'+colors[tempID]+'", "coordinate":'+newCoord+'}';
 		myJson.players.push(JSON.stringify(tempJson));
 		console.log("Create new users: \n\t"+JSON.stringify(tempJson));
@@ -74,19 +75,16 @@ io.on('connection', function(socket){
 	});
 
 	// Receiving new key press from the client
-	socket.on('key', function(keycode){
-		console.log('receive key ' + keycode);
-		if(keycode === 'up') {
-			currentCoord[1] -= 5;
-		} else if(keycode === 'down'){
-			currentCoord[1] += 5;
-		} else if(keycode === 'right') {
-			currentCoord[0] += 5;
-		} else {
-			currentCoord[0] -= 5;
+	socket.on('key', function(data){
+		var direction = data.direction;
+		var userID = data.id;
+		var userJson = myJson.players.userID;
+		console.log('receive key action:' + JSON.stringify(data));
+		if(direction === 'up' || direction === 'down' || direction === 'right' || direction === 'left') {
+			userJson.direction === direction;
 		}
-		io.emit('incoming data', currentCoord);
-		console.log('sent new coordinate to client');
+		// io.emit('incoming data', currentCoord);
+		console.log('update client data');
 	});
 });
 
