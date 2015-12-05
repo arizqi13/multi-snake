@@ -30,6 +30,7 @@ app.get('/', function(req, res) {
 // Feed the index page thwn there is a GET request from client
 app.get('/game.html', function(req, res) {
 	tempNick = req.query.nickName;
+	console.log("New user: " + tempNick);
 	res.sendFile(__dirname + '/game.html');
 });
 
@@ -38,20 +39,28 @@ io.on('connection', function(socket){
 	console.log('a user connected');
 
 	// Assign an id for the new user
-	socket.on('hello', function(){
+	socket.on('join', function(){
 		// Assign user an id
 		if(totalUsers < 5 && totalUsers >= 0){
-			for(var i=0; i<userArray.length,i++){
+			for(var i=0; i<userArray.length;i++){
 				if(userArray[i] === undefined || userArray[i] === 0){
 					tempID = i;
+					userArray[i] = 1;
 					break;
 				}					
 			}
 		// find the good coordinate for the new snake
-		var newCoord = {findCoordinate(myJson)};
+		var newCoord = [];
+		newCoord[0] = findCoordinate();
 		// Create the player data and add it to the Json
-		var tempJson = '{"id": '+tempID+', "nickname" : "'+tempNick+'", "color" : "'+colors[tempID]+'", "coordinate":'+newCoord+'}';
+		var tempJson = {};
+		tempJson.id = tempID;
+		tempJson.nickname = tempNick;
+		tempJson.color = colors[tempID];
+		tempJson.coordinate = newCoord;
+		// var tempJson = '{"id": '+tempID+', "nickname" : "'+tempNick+'", "color" : "'+colors[tempID]+'", "coordinate":'+newCoord+'}';
 		myJson.players.push(JSON.stringify(tempJson));
+		console.log("Create new users: \n\t"+JSON.stringify(tempJson));
 		} else {
 			// User can not play
 
@@ -77,10 +86,8 @@ io.on('connection', function(socket){
 		io.emit('incoming data', currentCoord);
 		console.log('sent new coordinate to client');
 	});
-
-	// Accepting new user
-	socket.on('join', function(nickName){
-		console.log("Accepting player " + nickName);
-		// add this nickname and the id to data JSON
-	});
 });
+
+function findCoordinate(){
+	return [0,0];
+}
