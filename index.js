@@ -109,45 +109,41 @@ function pickColor(){
 /////////////////////////////////////////////////////////
 // Alfian's space
 
+// Check collision. The board must be up to date and reflects the current position
+// of all snakes
 function collision() {
 	var all = myJson.players;
 
-	var player;
-	for (player in all) {
-		var body = player.coordinate;
-		var head = body[0];
+	var id;
+	for (id in all) {
+		var player = players[id];
+		var head = player.coordinate[0];
 
 		// rg = right most grid
 		// bg = bottom grid
 		// TODO: replace rg and bg with correct variable
 		// TODO: replace gameOver call with the correct function
 		if (head.x == -1 || head.x == rg || head.y == -1 || head.y == bg) {
-			gameOver(player.id);
+			gameOver(id);
 			continue;
 		}
 
-		var headLocation = 
+		// TODO: change board to the correct variable name
+		var square = board[JSON.stringify(head)].slice();
+		// This location should at least have this snake's head
+		// if > 1, collision with player happen
+		if (square.length > 1) {
+			// TODO: update for >2 players collision
+			var enemy = square.splice(square.indexOf(id), 0)[0];
+			if (enemy.coordinate.length > player.coordinate.length) {
+				gameOver(id);
+			} else {
+				gameOver(enemy);
+			}
+		}
 	}	
 }
 
-// TODO: remove this function. right now this is just to separated code writing
-// Go through all snakes and check if it hits the wall
-function wallCollision() {
-	var all = myJson.players;
-
-	for (var i = 0; i < all.length; i++) {
-		var player = all[i].coordinate;
-		var head = player[0];
-
-		// rg = right most grid
-		// bg = bottom grid
-		// TODO: replace rg and bg with correct variable
-		// TODO: replace gameOver call with the correct function
-		if (head.x == -1 || head.x == rg || head.y == -1 || head.y == bg) {
-			gameOver(player.id);
-		}
-	}
-}
 
 //////////////////////////////////////////////////////////
 // Tad's space
