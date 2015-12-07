@@ -8,12 +8,14 @@ app.use(express.static('public'));
 var MAX_NUM_USER = 5;
 var MAX_WIDTH = 500;
 var MAX_HEIGHT = 500;
+var FOOD = null;
 
 // Sample Json format
 // var myJson = {"players": {
 // 	"id1": {nickname" : "nickname", "color" : "color", "coordinate":[[0,0],[0,1],[0,2]], "direction":"up"},
 // 	"id2": {"nickname" : "nickname", "color" : "color", "coordinate":[[1,0], ], "direction":"left"}
 // 	}
+//  "food": {x:x, y:y}
 // };
 var clientSockets = [];
 var myJson = {"players": []};
@@ -160,6 +162,12 @@ function collision() {
 //////////////////////////////////////////////////////////
 // Tad's space
 
+function spawnFood() {
+	if (FOOD == null || FOOD == undefined) {
+		FOOD = findOpenSquare(0, maxX, 0, maxY);
+	}
+}
+
 // Finds a coordinate position not currently
 // occupied by a player's snake and returns it as an object
 // with an x and y field
@@ -172,8 +180,8 @@ function findOpenSquare(minimumX, maximumX, minimumY, minimumX) {
 		var potentialY = randInt(minimumX, maximumY);
 		if (isOpen(potentialX, potentialY)) {
 			var openSquare = {
-				x:potentialX;
-				y:potentialY;
+				x:potentialX,
+				y:potentialY
 			}
 			return openSquare;
 		}
@@ -184,8 +192,8 @@ function findOpenSquare(minimumX, maximumX, minimumY, minimumX) {
 // note that this does not test agains the food
 function isOpen(xval, yval) {
 	var testThisCoord = {
-		x:xval;
-		y:yval;
+		x:xval,
+		y:yval
 	}
 	var str = JSON.stringify(testThisCoord);
 	if (board[str] == undefined || board[str].length == 0) {
