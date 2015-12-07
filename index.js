@@ -111,12 +111,13 @@ function pickColor(){
 
 // Check collision. The board must be up to date and reflects the current position
 // of all snakes
+var diePlayer = [];
 function collision() {
 	var all = myJson.players;
 
 	var id;
 	for (id in all) {
-		var player = players[id];
+		var player = all[id];
 		var head = player.coordinate[0];
 
 		// rg = right most grid
@@ -134,11 +135,20 @@ function collision() {
 		// if > 1, collision with player happen
 		if (square.length > 1) {
 			// TODO: update for >2 players collision
-			var enemy = square.splice(square.indexOf(id), 0)[0];
-			if (enemy.coordinate.length > player.coordinate.length) {
+			var enemy = square.splice(square.indexOf({'id':id, 'bodyNum': 0}), 0)[0];
+			var enemyBody = all[enemy.id].coordinate;
+			var eaten = enemyBody.length - enemy.bodyNum;
+			if (eaten > player.coordinate.length) {
 				gameOver(id);
 			} else {
-				gameOver(enemy);
+				// lengthBuffer is the buffered length
+				// also used when the snake eats
+				// if buffer > 0, instead of moving the tail to the head,
+				// we simply extend the head by one until buffer = 0
+				player[id].lengthBuffer += eaten;
+				if (eaten == enemyBody.length) {
+					gameOver(enemy.id);
+				}
 			}
 		}
 	}	
