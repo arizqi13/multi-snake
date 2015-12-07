@@ -139,7 +139,8 @@ function collision() {
 			var enemyBody = all[enemy.id].coordinate;
 			var eaten = enemyBody.length - enemy.bodyNum;
 			if (eaten > player.coordinate.length) {
-				gameOver(id);
+				// gameOver(id);
+				diePlayer.push(id);
 			} else {
 				// lengthBuffer is the buffered length
 				// also used when the snake eats
@@ -147,7 +148,8 @@ function collision() {
 				// we simply extend the head by one until buffer = 0
 				player[id].lengthBuffer += eaten;
 				if (eaten == enemyBody.length) {
-					gameOver(enemy.id);
+					// gameOver(enemy.id);
+					diePlayer.push(enemy.id);
 				}
 			}
 		}
