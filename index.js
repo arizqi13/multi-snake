@@ -180,6 +180,83 @@ function collision() {
 //////////////////////////////////////////////////////////
 // Tad's space
 
+// finds a horizontal position on the board at least SPAWN_LEN long.
+// Will never spawn head closer than SPAWN_LEN squares away from wall
+// returns an ARRAY OF COORDINATES YAY
+
+// This is a very simple approach, it does not take into account
+// other snakes near head.
+// I figured first entering the game it would be hard
+// to dodge a snake even 4-6 spaces in front of you, and I thought
+// it would not be worth it to check at all.......................
+// Although, with the isOpen(x,y) method, it would not be too hard
+// to add this in. It may slow down the algorithm though if there are
+// long snakes on the board. Something to consider. Need to see how the
+// game plays.. If spawning running into enemies happens often, let's change
+var SPAWN_LEN = 5;
+function findSpawn(){
+	var res = [];
+	while (res.length != 0) {
+		// Gives them 2x the snake length for the sides. Will spawn them
+		// horizontally
+		var openSpace = findOpenSquare(SPAWN_LEN * 2, maxX - (SPAWN_LEN * 2),
+		 0, maxY - 1);
+		res.push(openSpace);
+		
+		// found open space on the left half of the board. Let's
+		// try and extend to the left with head facing right
+		if (openSpace.x < (maxX / 2)) {
+			while (res.length < SPAWN_LEN) {
+				var lastPushed = res[res.length - 1];
+				if (isOpen(lastPushed.x - 1, lastPushed.y)) {
+					var nextBodyPart = {"x":(lastPushed.x - 1), "y":lastPushed.y};
+					res.push(nextBodyPart);
+				} else {
+					res = [];
+					break; // go back around outer loop and find new 
+					// starting square.
+				}
+			}
+		} else {
+			while (res.length < SPAWN_LEN) {
+				var lastPushed = res[res.length - 1];
+				if (isOpen(lastPushed.x + 1, lastPushed.y)) {
+					var nextBodyPart = {"x":(lastPushed.x + 1), "y":lastPushed.y};
+					res.push(nextBodyPart);
+				} else {
+					res = [];
+					break; // go back around outer loop and find new 
+					// starting square.
+				}
+			}
+		}
+	}
+	return res;
+}
+
+// Returns direction based on which end the head is facing
+function findDirection(playerID) {
+	var a = myJson.players[playerID].coordinate;
+	if (a[0].x < a[1].x) {
+		return "left";
+	} else {
+		return "right";
+	}
+}
+
+
+// adds coordinates in coordArray to board and assigns
+// them to the player with the corresponding playerID
+function addCoordsToBoard(coordArray, playerID) {
+	for (var i = 0; i < coordArray.length; i++) {
+		var c = coordArray[i];
+		// push into the array at the coordiate
+		var ob = {};
+		ob["id"] = playerID;
+		ob["bodyNum"] = i;
+		board[JSON.stringify(c)].push(ob);
+	}
+}
 
 // Moves each snake based on their direction
 // assumes that the head of the snake is snake_array[0]
@@ -247,7 +324,8 @@ function move() {
 }
 
 
-
+// updates board based on moved snake body parts
+// does not update board for deleted players.
 function updateBoardAfterMove(playerCoords, playerID) {
 	var tempArray = playerCoords;
 	for(var i in tempArray){
@@ -274,7 +352,7 @@ function eat() {
 	if (snake == undefined || snake == null	|| snake.length == 0) {
 		return;
 	} else {
-		all[snake[0][id]].lengthBuffer++;
+		all[snake[0]['id']].lengthBuffer++;
 		FOOD = null;
 	}
 
@@ -293,20 +371,22 @@ function eat() {
 function spawnFood() {
 	// TODO: maxX and maxY subject to change
 	if (FOOD == null || FOOD == undefined) {
-		FOOD = findOpenSquare(0, maxX, 0, maxY);
+		FOOD = findOpenSquare(0, maxX - 1, 0, maxY - 1);
 	}
 }
 
 // Finds a coordinate position not currently
 // occupied by a player's snake and returns it as an object
-// with an x and y field
+// with an x and y field. 
+// TODO: ASSUMES maxX and maxY are exclusive. ie. will NEVER
+// return {x:max, y:max}
 function findOpenSquare(minimumX, maximumX, minimumY, minimumX) {
 	// TODO: the global variables maxX maxY and board might
 	// have been changed since this was written. Also maxX/maxY
 	// is a value that does exist in the board, not one past the edge
 	while (true) {
-		var potentialX = randInt(minimumX, maximumX);
-		var potentialY = randInt(minimumX, maximumY);
+		var potentialX = randInt(minimumX, maximumX - 1);
+		var potentialY = randInt(minimumX, maximumY - 1);
 		if (isOpen(potentialX, potentialY)) {
 			var openSquare = {
 				x:potentialX,
