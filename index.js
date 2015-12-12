@@ -7,19 +7,27 @@ app.use(express.static('public'));
 
 var MAX_NUM_USER = 5;
 var MAX_WIDTH = 500;
+var maxX = MAX_WIDTH/5;
 var MAX_HEIGHT = 500;
+var maxY = MAX_HEIGHT/5;
 var FOOD = null;
 
 // Sample Json format
 // var myJson = {"players": {
-// 	"id1": {nickname" : "nickname", "color" : "color", "coordinate":[[0,0],[0,1],[0,2]], "direction":"up"},
-// 	"id2": {"nickname" : "nickname", "color" : "color", "coordinate":[[1,0], ], "direction":"left"}
+// 	"id1": {nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2},{"x":1,"y":2}], "direction":"up"},
+// 	"id2": {"nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2}], "direction":"left"}
 // 	}
 //  "food": {x:x, y:y}
 // };
+
+// Sample board format
+// {"{"x":1,"y":2}":[{'id':id, 'bodyNum': 0}], "{"x":2,"y":2}":[{'id':id, 'bodyNum': 0}]}
+
 var clientSockets = [];
-var myJson = {"players": []};
-var availableColors = ["black","red","yellow","green","blue"];
+var myJson = {};
+var board = {};
+myJson["players"] = {};
+var availableColors = ["black","red","orange","green","blue"];
 var colorInUsed = [];
 var userArray = new Array();
 var currentCoord = [0,0];
@@ -40,7 +48,8 @@ app.get('/', function(req, res) {
 // Feed the index page thwn there is a GET request from client
 app.get('/game.html', function(req, res) {
 	tempNick = req.query.nickName;
-	console.log("New user: " + tempNick);
+	tempID = req.query.ID;
+	console.log("New user:\t" +tempID+":"+ tempNick);
 	res.sendFile(__dirname + '/game.html');
 });
 
@@ -59,16 +68,17 @@ io.sockets.on('connection', function(socket){
 			// Create the player data and add it to the Json
 			userArray.push(tempID);
 			var tempJson = {};
-			// tempJson.id = tempID;
 			tempJson.nickname = tempNick;
 			tempJson.color = pickColor();
-			tempJson.coordinate = findCoordinate();
-			tempJson.direction = findDirection();
-			var object = {};
-			object[tempID] = tempJson;
-			myJson.players.push(object);
+			tempJson.coordinate = findSpawn();
+			console.log("Found New Coordinate:" + JSON.stringify(tempJson.coordinate));
+			console.log(">>"+JSON.stringify(tempJson.coordinate[0]));
+			tempJson.direction = findDirection(tempJson.coordinate);
+			myJson.players[tempID] = tempJson;
 			console.log("Create new users: \n\t"+JSON.stringify(tempJson));
 			console.log("MyJSON:"+JSON.stringify(myJson));
+			// Add the new snake into the board
+			addNewSnakeToBoard(tempID, tempJson.coordiate);
 		}
 		// Send game state data to clients
 		io.emit('incoming data', myJson);
@@ -81,9 +91,8 @@ io.sockets.on('connection', function(socket){
 		console.log("Received direction:" + direction);
 		var userID = data.id;
 		console.log("MyJSON:"+JSON.stringify(myJson));
-		var userJson = myJson.players.userID;
+		var userJson = myJson.players[userID];
 		console.log('receive key action:' + JSON.stringify(data));
-		conso
 		if(direction === 'up' || direction === 'down' || direction === 'right' || direction === 'left') {
 			userJson["direction"] = direction;
 		}
@@ -102,13 +111,13 @@ io.sockets.on('connection', function(socket){
 
 function pickColor(){
 	if(availableColors.length > 0){
-		var i = randInt(-1,availableColors.length-1);
+		var i = randInt(0,availableColors.length-1);
 		var color = availableColors[i];
 		availableColors.splice(i,1);
 		colorInUsed.push(color);
 		return color;
 	}
-	return "red";
+	return "pupple";
 }
 
 //TODO:
@@ -118,14 +127,15 @@ function gameOver(socketID){
 	return false;
 }
 
-function findCoordinate(){
-	return [{"x":"1","y":"1"},{"x":"1","y":"2"}];
-
+function addNewSnakeToBoard(userID, coordinates){
+	for(var i in coordinates){
+		if(board[coordinates[i]].length == 0)
+			board[coordinates[i]] = {'id':userID, 'bodyNum': i};
+		else
+			board[coordinates[i]].push({'id':userID, 'bodyNum': i});
+	}
 }
 
-function findDirection(){
-	return "right";
-}
 /////////////////////////////////////////////////////////
 // Alfian's space
 
@@ -379,13 +389,16 @@ function spawnFood() {
 // with an x and y field. 
 // TODO: ASSUMES maxX and maxY are exclusive. ie. will NEVER
 // return {x:max, y:max}
-function findOpenSquare(minimumX, maximumX, minimumY, minimumX) {
+function findOpenSquare(minimumX, maximumX, minimumY, maximumY) {
 	// TODO: the global variables maxX maxY and board might
 	// have been changed since this was written. Also maxX/maxY
 	// is a value that does exist in the board, not one past the edge
 	while (true) {
+		var potentialY = randInt(minimumY, maximumY - 1);
 		var potentialX = randInt(minimumX, maximumX - 1);
-		var potentialY = randInt(minimumX, maximumY - 1);
+		console.log("In findOpenSquare minimumX:"+minimumX+" maximumX:"+maximumX+
+			"minimumY:"+minimumY + " maximumY:"+maximumX+ 
+			" potentialX:"+potentialX+" potentialY:"+potentialY);
 		if (isOpen(potentialX, potentialY)) {
 			var openSquare = {
 				x:potentialX,
@@ -399,6 +412,8 @@ function findOpenSquare(minimumX, maximumX, minimumY, minimumX) {
 // Tests if the coordinates (xval,yval) are occupied by a snake
 // note that this does not test agains the food
 function isOpen(xval, yval) {
+	if(xval == null || xval == undefined || yval == null || yval == undefined)
+		return false;
 	var testThisCoord = {
 		x:xval,
 		y:yval
