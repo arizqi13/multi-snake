@@ -45,12 +45,14 @@ $(document).keydown(function(e){
 });
 
 socket.on('incoming data', function(data){
-	for(var i in data.players){
-		var player = JSON.parse(data.players[i]);
-		nickName = player.nickname;
-		id = player.id;
-		render(player.color, player.coordinate);
-		console.log("id:"+id+"\t nick:"+nickName);
+	for(var i=0;i<data.players.length;i++){
+		var player = data.players[i];
+		for(currId in player){
+			id = currId;
+			nickName = player[currId].nickname;
+			render(player[currId].color, player[currId].coordinate);
+			console.log("id:"+id+"\t nick:"+nickName);
+		}
 	}
 });
 

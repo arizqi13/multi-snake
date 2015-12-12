@@ -49,6 +49,7 @@ io.sockets.on('connection', function(socket){
 	clientSockets.push(socket);
 	console.log('connected to client:' + socket.id);
 	tempID = socket.id;
+	console.log("tempID:" + tempID);
 	// Assign an id for the new user
 	socket.on('join', function(){
 		// Assign user an id
@@ -58,14 +59,16 @@ io.sockets.on('connection', function(socket){
 			// Create the player data and add it to the Json
 			userArray.push(tempID);
 			var tempJson = {};
-			tempJson.id = tempID;
+			// tempJson.id = tempID;
 			tempJson.nickname = tempNick;
 			tempJson.color = pickColor();
 			tempJson.coordinate = findCoordinate();
-			tempJson.direction = "";
-
-			myJson.players.push(JSON.stringify(tempJson));
+			tempJson.direction = findDirection();
+			var object = {};
+			object[tempID] = tempJson;
+			myJson.players.push(object);
 			console.log("Create new users: \n\t"+JSON.stringify(tempJson));
+			console.log("MyJSON:"+JSON.stringify(myJson));
 		}
 		// Send game state data to clients
 		io.emit('incoming data', myJson);
@@ -73,12 +76,16 @@ io.sockets.on('connection', function(socket){
 
 	// Receiving new key press from the client
 	socket.on('key', function(data){
+		console.log("Received data:" + data);
 		var direction = data.direction;
+		console.log("Received direction:" + direction);
 		var userID = data.id;
+		console.log("MyJSON:"+JSON.stringify(myJson));
 		var userJson = myJson.players.userID;
 		console.log('receive key action:' + JSON.stringify(data));
+		conso
 		if(direction === 'up' || direction === 'down' || direction === 'right' || direction === 'left') {
-			userJson.direction === direction;
+			userJson["direction"] = direction;
 		}
 		// io.emit('incoming data', currentCoord);
 		console.log('updated client data');
@@ -87,7 +94,7 @@ io.sockets.on('connection', function(socket){
 	// When the user disconnect
 	socket.on('disconnect', function(){
 		var socketIndex = clientSockets.indexOf(socket);
-		clientSockets.splice(i,1);
+		clientSockets.splice(socketIndex,1);
     	console.log('disconnect user: ' + socket.id);
     	gameOver(socket.id);
   });
@@ -107,7 +114,18 @@ function pickColor(){
 //TODO:
 //Movement, and broadcast data to clients every 60 ms
 
+function gameOver(socketID){
+	return false;
+}
 
+function findCoordinate(){
+	return [{"x":"1","y":"1"},{"x":"1","y":"2"}];
+
+}
+
+function findDirection(){
+	return "right";
+}
 /////////////////////////////////////////////////////////
 // Alfian's space
 
@@ -162,7 +180,118 @@ function collision() {
 //////////////////////////////////////////////////////////
 // Tad's space
 
+
+// Moves each snake based on their direction
+// assumes that the head of the snake is snake_array[0]
+// and that the tail is snake_array[snake_array.length - 1]
+// decrements lengthBuffer and adds one coordinate in snake_array
+// as new head else if lengthBuffer = 0 places tail as new head
+// as stands, the direction can go back on itself. The game.js
+// should restrict movement to not go against its current direction
+function move() {
+	var all = myJson.players;
+	var id;
+
+	for (id in all) {
+		var player = all[id];
+		var head = player.coordinate[0];
+
+		//The movement code for the snake to come here.
+		var d = player.direction;
+		var nx = head.x;
+		var ny = head.y;
+		if(d == "right") nx++;
+		else if(d == "left") nx--;
+		else if(d == "up") ny--;
+		else if(d == "down") ny++;
+		var toRemoveFromBoard;
+		var toAddToBoard;
+		// make the tail the new head
+		if (player.lengthBuffer == undefined || player.lengthBuffer == 0) {
+			
+			var snakeTail = player.coordinate.pop();
+			
+			toRemoveFromBoard = JSON.stringify(snakeTail);
+			var tempArray = board[toRemoveFromBoard];
+			for(var i in tempArray){
+				if(i.id == id){
+					tempArray.slice(i,1);
+					break;
+				}
+			}
+
+			snakeTail.x = nx;
+			snakeTail.y = ny;
+			player.coordinate.unshift(snakeTail);
+			
+
+			toAddToBoard = JSON.stringify(snakeTail);
+
+
+		// make a new head and unshift onto the player.coordinate array
+		} else {
+			player.lengthBuffer--;
+			var newHead = {
+				x:nx,
+				y:ny
+			};
+			player.coordinate.unshift(newHead);
+
+
+			toAddToBoard = JSON.stringify(newHead);
+		}
+		updateBoardAfterMove(player.coordinate, id);
+
+		board[toAddToBoard].unshift({id:id, bodyNum:0});
+	}
+}
+
+
+
+function updateBoardAfterMove(playerCoords, playerID) {
+	var tempArray = playerCoords;
+	for(var i in tempArray){
+		var boardArr = board[JSON.stringify(tempArray[i])];
+		for (var j in boardArr) {
+			if (boardArr[j]["id"] == playerID) {
+				boardArr[j].bodyNum += 1;
+			}
+		}
+	}
+}
+
+// checks the heads of the snakes against the 
+// location of the food.
+// increments the player's lengthBuffer
+// and sets the food to null if the snake eats
+// This comes after collision(), so only one snake
+// can possibly eat the food
+function eat() {
+	var all = myJson.players;
+	var id;
+	var foodCoordinate = JSON.stringify(FOOD);
+	var snake = board[foodCoordinate];
+	if (snake == undefined || snake == null	|| snake.length == 0) {
+		return;
+	} else {
+		all[snake[0][id]].lengthBuffer++;
+		FOOD = null;
+	}
+
+	// check the food coordinate in the board
+	// for (id in all) {
+	// 	var player = all[id];
+	// 	var head = player.coordinate[0];
+	// 	if (head.x == FOOD.x && head.y == FOOD.y) {
+	// 		player.lengthBuffer++;
+	// 		food = null;
+	// 		return;
+	// 	}
+	// }
+}
+
 function spawnFood() {
+	// TODO: maxX and maxY subject to change
 	if (FOOD == null || FOOD == undefined) {
 		FOOD = findOpenSquare(0, maxX, 0, maxY);
 	}
@@ -182,7 +311,7 @@ function findOpenSquare(minimumX, maximumX, minimumY, minimumX) {
 			var openSquare = {
 				x:potentialX,
 				y:potentialY
-			}
+			};
 			return openSquare;
 		}
 	}
@@ -194,7 +323,7 @@ function isOpen(xval, yval) {
 	var testThisCoord = {
 		x:xval,
 		y:yval
-	}
+	};
 	var str = JSON.stringify(testThisCoord);
 	if (board[str] == undefined || board[str].length == 0) {
 		return true;
@@ -207,10 +336,5 @@ function isOpen(xval, yval) {
 function randInt(minimumInt, maximumInt) {
 	return Math.floor(Math.random() * (maximumInt + 1 - minimumInt) + minimumInt);
 }
-
-function buildCoordinateString(x, y) {
-	return "(" + x + "," + y ")";
-}
-
 
 
