@@ -196,7 +196,7 @@ function collision() {
 var SPAWN_LEN = 5;
 function findSpawn(){
 	var res = [];
-	while (res.length != 0) {
+	while (res.length == 0) {
 		// Gives them 2x the snake length for the sides. Will spawn them
 		// horizontally
 		var openSpace = findOpenSquare(SPAWN_LEN * 2, maxX - (SPAWN_LEN * 2),
@@ -235,9 +235,8 @@ function findSpawn(){
 }
 
 // Returns direction based on which end the head is facing
-function findDirection(playerID) {
-	var a = myJson.players[playerID].coordinate;
-	if (a[0].x < a[1].x) {
+function findDirection(coordinateArray) {
+	if (coordinateArray[0].x < coordinateArray[1].x) {
 		return "left";
 	} else {
 		return "right";
