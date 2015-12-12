@@ -57,13 +57,13 @@ app.get('/game.html', function(req, res) {
 io.sockets.on('connection', function(socket){
 	clientSockets.push(socket);
 	console.log('connected to client:' + socket.id);
-	tempID = socket.id;
+	// tempID = socket.id;
 	console.log("tempID:" + tempID);
 	// Assign an id for the new user
 	socket.on('join', function(){
 		// Assign user an id
 		var totalUsers = userArray.length;
-		if(totalUsers < MAX_NUM_USER && totalUsers >= 0){
+		if(totalUsers < MAX_NUM_USER && totalUsers >= 0 && myJson.players[tempID] == undefined){
 			// Find the good coordinate for the new snake
 			// Create the player data and add it to the Json
 			userArray.push(tempID);
@@ -79,8 +79,14 @@ io.sockets.on('connection', function(socket){
 			console.log("MyJSON:"+JSON.stringify(myJson));
 			// Add the new snake into the board
 			addNewSnakeToBoard(tempID, tempJson.coordiate);
+			// Send game state data to clients
+			io.emit('assignID', {tempID:tempJson});
+		} else if(myJson.players[tempID] != undefined){
+			// Send game state data to clients
+			var player = {};
+			player[tempID] = myJson.players[tempID];
+			io.emit('assignID', player);
 		}
-		// Send game state data to clients
 		io.emit('incoming data', myJson);
 	});
 

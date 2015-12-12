@@ -18,6 +18,17 @@ $(document).ready(function(){
 	socket.emit('join');
 })
 
+
+socket.on('assignID', function(json){
+	if(json != undefined){
+		for(var player in json){
+			client.id = player;
+			client.nickName = json[player].nickname;
+			client.direction = json[player].direction;
+		}	
+	}
+});
+
 $(document).keydown(function(e){
 	var charCode = (e.which) ? e.which : e.keyCode;
 	if(client.id != undefined && client.nickName != undefined){
@@ -55,15 +66,15 @@ socket.on('incoming data', function(data){
 	if(data != undefined) {
 		resetCanvas();
 		for(var player in data.players){
-		// var player = data.players[i];
-			client.id = player;
-			client.nickName = data.players[player].nickname;
-			client.direction = data.players[player].direction;
+			// client.id = player;
+			// client.nickName = data.players[player].nickname;
+			// client.direction = data.players[player].direction;
 			render(data.players[player].color, data.players[player].coordinate);
 			console.log("id:"+client.id+"\t nick:"+client.snickName);
 		}
 	}
 });
+
 
 function render(color, coordinates){
 	for(var i in coordinates){
