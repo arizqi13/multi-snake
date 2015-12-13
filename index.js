@@ -35,6 +35,20 @@ var tempNick;
 var tempColorIndex;
 var tempID;
 
+initBoard(); // lots of calls to board without initializing
+// if it's undefined. I do this. EZ fix sets all possible
+// coordinates to []. 
+
+setInterval(go, 1000);
+
+
+function go() {
+	collision();
+	spawnFood();
+	eat();
+	move();
+}
+
 
 http.listen(port, function(){
   	console.log('listening on *:'+port);
@@ -57,7 +71,7 @@ app.get('/game.html', function(req, res) {
 io.sockets.on('connection', function(socket){
 	clientSockets.push(socket);
 	console.log('connected to client:' + socket.id);
-	// tempID = socket.id;
+	tempID = socket.id;
 	console.log("tempID:" + tempID);
 	// Assign an id for the new user
 	socket.on('join', function(){
@@ -80,7 +94,9 @@ io.sockets.on('connection', function(socket){
 			// Add the new snake into the board
 			addNewSnakeToBoard(tempID, tempJson.coordiate);
 			// Send game state data to clients
-			io.emit('assignID', {tempID:tempJson});
+			var toEmit = {};
+			toEmit[tempID] = tempJson;
+			io.emit('assignID', toEmit);
 		} else if(myJson.players[tempID] != undefined){
 			// Send game state data to clients
 			var player = {};
@@ -160,7 +176,7 @@ function collision() {
 		// bg = bottom grid
 		// TODO: replace rg and bg with correct variable
 		// TODO: replace gameOver call with the correct function
-		if (head.x == -1 || head.x == rg || head.y == -1 || head.y == bg) {
+		if (head.x == -1 || head.x == maxX || head.y == -1 || head.y == maxY) {
 			gameOver(id);
 			continue;
 		}
@@ -300,7 +316,7 @@ function move() {
 		var toAddToBoard;
 		// make the tail the new head
 		if (player.lengthBuffer == undefined || player.lengthBuffer == 0) {
-			
+			console.log("THE X IS " nx);
 			var snakeTail = player.coordinate.pop();
 			
 			toRemoveFromBoard = JSON.stringify(snakeTail);
@@ -437,4 +453,11 @@ function randInt(minimumInt, maximumInt) {
 	return Math.floor(Math.random() * (maximumInt + 1 - minimumInt) + minimumInt);
 }
 
-
+function initBoard() {
+	for (var x = 0; x < maxX; x++) {
+		for (var y = 0; y < maxY; y++) {
+			var temp = {x:x, y:y};
+			board[JSON.stringify(temp)] = [];
+		}
+	}
+}
