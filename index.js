@@ -35,20 +35,23 @@ var tempNick;
 var tempColorIndex;
 var tempID;
 
-initBoard(); // lots of calls to board without initializing
+//initBoard(); // lots of calls to board without initializing
 // if it's undefined. I do this. EZ fix sets all possible
 // coordinates to []. 
 
-setInterval(go, 100);
+setInterval(go, 1000);
 
 function go() {
 	// if(myJson === {} || board === {}){
 	// 	return;
 	// }
+	updateBoard();
+	console.log(board);
 	collision();
-	spawnFood();
-	eat();
+	// spawnFood();
+	// eat();
 	move();
+	io.emit('incoming data', myJson);
 }
 
 
@@ -228,9 +231,9 @@ function collision() {
 }
 
 function updateBoard() {
-	board = {};
+	board = null;
 	var all = myJson.players;
-
+	board = {};
 	var id;
 	for (id in all) {
 		var player = all[id].coordinate;
@@ -354,7 +357,7 @@ function move() {
 		// make the tail the new head
 		if (player.lengthBuffer == undefined || player.lengthBuffer == 0) {
 			console.log("THE X IS " + nx);
-			var snakeTail = player.coordinate.pop();
+			player.coordinate.pop();
 			
 			// toRemoveFromBoard = JSON.stringify(snakeTail);
 			// var tempArray = board[toRemoveFromBoard];
@@ -368,9 +371,9 @@ function move() {
 
 			// board[toRemoveFromBoard] = tempArray;
 
-			snakeTail.x = nx;
-			snakeTail.y = ny;
-			player.coordinate.unshift(snakeTail);
+			// snakeTail.x = nx;
+			// snakeTail.y = ny;
+			player.coordinate.unshift({x: nx, y: ny});
 
 			// toAddToBoard = JSON.stringify(snakeTail);
 
