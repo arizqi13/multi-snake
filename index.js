@@ -43,9 +43,10 @@ var tempID;
 setInterval(go, 500);
 
 function go() {
-  // if(myJson === {} || board === {}){
-  //  return;
-  // }
+  if(myJson.players === {} || board === {}){
+   return;
+  }
+  console.log(myJson.players);
   updateBoard();
   //console.log(board);
   collision();
@@ -79,6 +80,7 @@ io.sockets.on('connection', function(socket){
   console.log("tempID:" + tempID);
   // Assign an id for the new user
   socket.on('join', function(clientData){
+
     if(clientData != undefined){
       // Assign user an id
       var totalUsers = Object.keys(myJson.players).length;
@@ -93,6 +95,7 @@ io.sockets.on('connection', function(socket){
         console.log(">>"+JSON.stringify(tempJson.coordinate[0]));
         tempJson.direction = findDirection(tempJson.coordinate);
         myJson.players[clientData.id] = tempJson;
+        socket.clientID = clientData.id;
         console.log("Create new users: \n\t"+JSON.stringify(tempJson));
         console.log("MyJSON:"+JSON.stringify(myJson));
         // Send game initial direction to clients
@@ -126,6 +129,9 @@ io.sockets.on('connection', function(socket){
   socket.on('disconnect', function(){
     var socketIndex = clientSockets.indexOf(socket);
     clientSockets.splice(socketIndex,1);
+
+    console.log('they done %s',socket.clientID);
+    delete myJson.players[socket.clientID];
       console.log('disconnect user: ' + socket.id);
   });
 });
@@ -160,8 +166,10 @@ function gameOver(){
       availableColors.push(color);
 
       // remove the player from myJson
-      delete myJson[deathID];
+      delete myJson.players[deathID];
     }
+
+    diePlayer = [];
   }
 }
 // add a snake to the board
