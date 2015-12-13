@@ -14,8 +14,8 @@ var FOOD = null;
 
 // Sample Json format
 // var myJson = {"players": {
-// 	"id1": {nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2},{"x":1,"y":2}], "direction":"up"},
-// 	"id2": {"nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2}], "direction":"left"}
+// 	"id1": {nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2},{"x":1,"y":2}], "direction":"up", "lengthBuffer":2},
+// 	"id2": {"nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2}], "direction":"left", "lengthBuffer":0}
 // 	}
 //  "food": {"x":x, "y":y, "color": color}
 // };
@@ -39,7 +39,7 @@ initBoard(); // lots of calls to board without initializing
 // if it's undefined. I do this. EZ fix sets all possible
 // coordinates to []. 
 
-setInterval(go, 1000);
+setInterval(go, 100);
 
 
 function go() {
@@ -47,6 +47,7 @@ function go() {
 	spawnFood();
 	eat();
 	move();
+	io.emit('incoming data', myJson);
 }
 
 
@@ -324,17 +325,19 @@ function move() {
 			
 			toRemoveFromBoard = JSON.stringify(snakeTail);
 			var tempArray = board[toRemoveFromBoard];
+			// Remove old tail from the board
 			for(var i in tempArray){
-				if(i.id == id){
+				if(tempArray[i].id == id){
 					tempArray.slice(i,1);
 					break;
 				}
 			}
 
+			board[toRemoveFromBoard] = tempArray;
+
 			snakeTail.x = nx;
 			snakeTail.y = ny;
 			player.coordinate.unshift(snakeTail);
-			
 
 			toAddToBoard = JSON.stringify(snakeTail);
 
