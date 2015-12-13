@@ -39,7 +39,10 @@ initBoard(); // lots of calls to board without initializing
 // if it's undefined. I do this. EZ fix sets all possible
 // coordinates to []. 
 
-setInterval(go, 1000);
+setInterval(function() {
+	go();
+	io.emit("incoming data", myJson);
+}, 100);
 
 
 function go() {
@@ -175,10 +178,8 @@ function collision() {
 		var player = all[id];
 		var head = player.coordinate[0];
 
-		// rg = right most grid
-		// bg = bottom grid
-		// TODO: replace rg and bg with correct variable
-		// TODO: replace gameOver call with the correct function
+		// maxX = right most grid
+		// maxY = bottom grid
 		if (head.x == -1 || head.x == maxX || head.y == -1 || head.y == maxY) {
 			gameOver(id);
 			continue;
@@ -190,8 +191,21 @@ function collision() {
 		// if > 1, collision with player happen
 		if (square.length > 1) {
 			// TODO: update for >2 players collision
-			var enemy = square.splice(square.indexOf({'id':id, 'bodyNum': 0}), 0)[0];
+			console.log(square);
+			console.log(id);
+
+			var enemy;
+			for (var i = 0; i < square.length; i++) {
+				//square.indexOf({'id':id, 'bodyNum': 0})
+				var sq = square[i];
+				if (sq.id === id && sq.bodyNum === 0) {
+					enemy = sq;
+					break;
+				}
+			}
+			// var enemy = square.splice(0, 0)[0];
 			var enemyBody = all[enemy.id].coordinate;
+			console.log(enemyBody);
 			var eaten = enemyBody.length - enemy.bodyNum;
 			if (eaten > player.coordinate.length) {
 				// gameOver(id);
