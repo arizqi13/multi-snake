@@ -17,7 +17,7 @@ var FOOD = null;
 // 	"id1": {nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2},{"x":1,"y":2}], "direction":"up"},
 // 	"id2": {"nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2}], "direction":"left"}
 // 	}
-//  "food": {x:x, y:y}
+//  "food": {"x":x, "y":y, "color": color}
 // };
 
 // Sample board format
@@ -98,6 +98,8 @@ io.sockets.on('connection', function(socket){
 			toEmit[tempID] = tempJson;
 			io.emit('assignID', toEmit);
 		} else if(myJson.players[tempID] != undefined){
+			// If the client is unauthorized or the game field is full, just display the
+			// game field to this client
 			// Send game state data to clients
 			var player = {};
 			player[tempID] = myJson.players[tempID];
@@ -131,6 +133,7 @@ io.sockets.on('connection', function(socket){
   });
 });
 
+// pick a random color from the list of availble colors
 function pickColor(){
 	if(availableColors.length > 0){
 		var i = randInt(0,availableColors.length-1);
@@ -148,7 +151,7 @@ function pickColor(){
 function gameOver(socketID){
 	return false;
 }
-
+// add a snake to the board
 function addNewSnakeToBoard(userID, coordinates){
 	for(var i in coordinates){
 		if(board[coordinates[i]].length == 0)
@@ -316,7 +319,7 @@ function move() {
 		var toAddToBoard;
 		// make the tail the new head
 		if (player.lengthBuffer == undefined || player.lengthBuffer == 0) {
-			console.log("THE X IS " nx);
+			console.log("THE X IS " + nx);
 			var snakeTail = player.coordinate.pop();
 			
 			toRemoveFromBoard = JSON.stringify(snakeTail);
