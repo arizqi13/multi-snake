@@ -39,15 +39,7 @@ initBoard(); // lots of calls to board without initializing
 // if it's undefined. I do this. EZ fix sets all possible
 // coordinates to []. 
 
-<<<<<<< HEAD
-setInterval(function() {
-	go();
-	io.emit("incoming data", myJson);
-}, 100);
-=======
 setInterval(go, 100);
->>>>>>> d891b65c9744aee881dd6c4a187ef9da51ec43e8
-
 
 function go() {
 	collision();
