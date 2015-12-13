@@ -49,6 +49,7 @@ function go() {
   updateBoard();
   //console.log(board);
   collision();
+  gameOver();
   // spawnFood();
   // eat();
   move();
@@ -149,6 +150,9 @@ function gameOver(){
   // add the color back to availableColors
   // emit an event to that client to notify them
   if(diePlayer.length > 0){
+    // emit the gameOver event to clients
+    io.emit('game over', diePlayer);
+
     for(var i in diePlayer){
       var deathID = diePlayer[i];
       // add the client's color back to availableColors
@@ -158,8 +162,6 @@ function gameOver(){
       // remove the player from myJson
       delete myJson[deathID];
     }
-    // emit the gameOver event to clients
-    io.emit('game over', diePlayer);
   }
 }
 // add a snake to the board
