@@ -40,7 +40,7 @@ var tempID;
 // if it's undefined. I do this. EZ fix sets all possible
 // coordinates to []. 
 
-setInterval(go, 1000);
+setInterval(go, 500);
 
 function go() {
   // if(myJson === {} || board === {}){
@@ -213,23 +213,28 @@ function collision() {
       }
       // var enemy = square.splice(0, 0)[0];
       var enemyBody = all[enemy.id].coordinate;
-      
+      console.log(enemyBody);
       var eaten = enemyBody.length - enemy.bodyNum;
-      if (eaten > player.coordinate.length) {
+      if (eaten >= player.coordinate.length) {
         // gameOver(id);
         diePlayer.push(id);
+        if (eaten == enemyBody.length) {
+          diePlayer.push(enemy.id);
+        }
       } else {
         // lengthBuffer is the buffered length
         // also used when the snake eats
         // if buffer > 0, instead of moving the tail to the head,
         // we simply extend the head by one until buffer = 0
-        if (!player[id].lengthBuffer) {
-          player[id].lengthBuffer = {};
+        if (!player.lengthBuffer) {
+          player.lengthBuffer = 0;
         }
-        player[id].lengthBuffer += eaten;
+        player.lengthBuffer += eaten;
         if (eaten == enemyBody.length) {
           // gameOver(enemy.id);
           diePlayer.push(enemy.id);
+        } else {
+          all[enemy.id].coordinate = enemyBody.slice(0, enemy.bodyNum);
         }
       }
     }
