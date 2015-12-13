@@ -185,6 +185,10 @@ function collision() {
 
   var id;
   for (id in all) {
+    if (diePlayer.indexOf(id) > -1) {
+      // skip this player, has died
+      continue;
+    }
     var player = all[id];
     var head = player.coordinate[0];
 
@@ -208,10 +212,28 @@ function collision() {
       for (var i = 0; i < square.length; i++) {
         //square.indexOf({'id':id, 'bodyNum': 0})
         var sq = square[i];
+
+        if (diePlayer.indexOf(sq.id) > -1) {
+          // skip this enemy, has died
+          continue;
+        }
+
+        if (sq.id === id && sq.bodyNum != 0) {
+          // hit itself, die. stop searching enemy
+          diePlayer.push(id);
+          break;
+        }
+
         if (sq.id != id) {
+          // Found the enemy
           enemy = sq;
           break;
         }
+      }
+
+      if (diePlayer.indexOf(id) > -1) {
+        // skip this player, has died
+        continue;
       }
       // var enemy = square.splice(0, 0)[0];
       var enemyBody = all[enemy.id].coordinate;
