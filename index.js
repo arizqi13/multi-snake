@@ -225,6 +225,24 @@ function collision() {
 	}	
 }
 
+function updateBoard() {
+	board = {};
+	var all = myJson.players;
+
+	var id;
+	for (id in all) {
+		var player = all[id].coordinate;
+
+		for (var i = 0; i < player.length; i++) {
+			var location = JSON.stringify(player[i]);
+
+			if (!board[location]) {
+				board[location] = [];
+			}
+			board[location].push({'id': id, 'bodyNum': i});
+		}
+	}
+}
 
 //////////////////////////////////////////////////////////
 // Tad's space
