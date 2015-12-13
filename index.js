@@ -203,14 +203,14 @@ function collision() {
 			for (var i = 0; i < square.length; i++) {
 				//square.indexOf({'id':id, 'bodyNum': 0})
 				var sq = square[i];
-				if (sq.id === id && sq.bodyNum === 0) {
+				if (sq.id != id) {
 					enemy = sq;
 					break;
 				}
 			}
 			// var enemy = square.splice(0, 0)[0];
 			var enemyBody = all[enemy.id].coordinate;
-			console.log(enemyBody);
+			
 			var eaten = enemyBody.length - enemy.bodyNum;
 			if (eaten > player.coordinate.length) {
 				// gameOver(id);
@@ -220,6 +220,9 @@ function collision() {
 				// also used when the snake eats
 				// if buffer > 0, instead of moving the tail to the head,
 				// we simply extend the head by one until buffer = 0
+				if (!player[id].lengthBuffer) {
+					player[id].lengthBuffer = {};
+				}
 				player[id].lengthBuffer += eaten;
 				if (eaten == enemyBody.length) {
 					// gameOver(enemy.id);
