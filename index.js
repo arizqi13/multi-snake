@@ -189,7 +189,7 @@ function collision() {
     // maxX = right most grid
     // maxY = bottom grid
     if (head.x == -1 || head.x == maxX || head.y == -1 || head.y == maxY) {
-      gameOver(id);
+      diePlayer.push(id);
       continue;
     }
 
