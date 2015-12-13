@@ -1,23 +1,26 @@
 <!doctype html>
 <html>
-	<head>
-		<title>The Multiplayer Snake Game</title>
-		<link rel="stylesheet" type="text/css" href="game.css">
-	</head>
-	<body>
-		<div>
-			<p>
-				<form id="userInput" action="/game.html" method="get" target="_blank">
-					Player's Nickname:<br>
-					<input name="nickName" type="text" placeholder="Your desired nickName">
-					<br>
-					Your ID:<br>
-					<input type="text" name="ID" id="id" value="" readonly>
-					<br>
-					<input type="submit" value="Join!">
-				</form>
-			</p>
-		</div>
-		<script type="text/javascript" src="clientIndex.js"></script>
-	</body>
+  <head>
+    <title>The Multiplayer Snake Game</title>
+    <link rel="stylesheet" type="text/css" href="game.css">
+  </head>
+  <body>
+    <div id="signUp">
+      <p>
+          <input id="nickName" type="text" placeholder="Your desired nickName">
+      </p>
+      <button id="join">JOIN</button>
+    </div>
+    
+    <div id="gameBoard">
+      <canvas id="gameField" width="500px" height="500px"></canvas>
+      <form method="get" action="/">
+          <button type="submit">Restart</button>
+      </form>
+    </div>
+
+    <script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
+      <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="game.js"></script>
+  </body>
 </html>
