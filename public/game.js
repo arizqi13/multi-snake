@@ -35,14 +35,10 @@ socket.on('confirm join', function(initialDirection){
 });
 
 // receive game over signal
-socket.on('game over', function(diePlayer){
-  if(diePlayer != undefined && diePlayer.length > 0){
-    if(diePlayer.indexOf(client.id) > -1){
-      alert("Sorry, you've lost this game.")
-      // Reload the page
-      location.Reload();
-    }
-  }
+socket.on('game over', function(){
+    alert("Sorry, you've lost this game.");
+    // Reload the page
+    location.reload();
 });
 
 // when player hits a key, combine the current and the keypress

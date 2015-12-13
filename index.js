@@ -23,7 +23,10 @@ var FOOD = null;
 // Sample board format
 // {"{"x":1,"y":2}":[{'id':id, 'bodyNum': 0}], "{"x":2,"y":2}":[{'id':id, 'bodyNum': 0}]}
 
-var clientSockets = [];
+// Sample clientSockets format
+// clientSockets = {"userid":"correspnding socket id"}
+
+var clientSockets = {};
 var myJson = {};
 var board = {};
 myJson["players"] = {};
@@ -74,7 +77,6 @@ app.get('/game.html', function(req, res) {
 
 
 io.sockets.on('connection', function(socket){
-  clientSockets.push(socket);
   console.log('connected to client:' + socket.id);
   var currentClient = socket.id;
   console.log("tempID:" + tempID);
@@ -95,11 +97,11 @@ io.sockets.on('connection', function(socket){
         console.log(">>"+JSON.stringify(tempJson.coordinate[0]));
         tempJson.direction = findDirection(tempJson.coordinate);
         myJson.players[clientData.id] = tempJson;
-        socket.clientID = clientData.id;
         console.log("Create new users: \n\t"+JSON.stringify(tempJson));
         console.log("MyJSON:"+JSON.stringify(myJson));
         // Send game initial direction to clients
         socket.emit('confirm join', tempJson.direction);
+        clientSockets[clientData.id] = socket.id;
       }
       // Send game state data to user
       io.emit('incoming data', myJson);
@@ -127,12 +129,7 @@ io.sockets.on('connection', function(socket){
 
   // When the user disconnect
   socket.on('disconnect', function(){
-    var socketIndex = clientSockets.indexOf(socket);
-    clientSockets.splice(socketIndex,1);
-
-    console.log('they done %s',socket.clientID);
-    delete myJson.players[socket.clientID];
-      console.log('disconnect user: ' + socket.id);
+    console.log('disconnect user: ' + socket.id);
   });
 });
 
@@ -157,18 +154,19 @@ function gameOver(){
   // emit an event to that client to notify them
   if(diePlayer.length > 0){
     // emit the gameOver event to clients
-    io.emit('game over', diePlayer);
+    // io.emit('game over', diePlayer);
 
     for(var i in diePlayer){
       var deathID = diePlayer[i];
       // add the client's color back to availableColors
       var color = myJson.players[deathID].color;
       availableColors.push(color);
-
+      var dieClient = clientSockets[deathID];
+      io.sockets.connected[dieClient].emit('game over');
       // remove the player from myJson
       delete myJson.players[deathID];
+      delete clientSockets[deathID];
     }
-
     diePlayer = [];
   }
 }
