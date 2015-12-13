@@ -42,11 +42,13 @@ initBoard(); // lots of calls to board without initializing
 setInterval(go, 100);
 
 function go() {
+	// if(myJson === {} || board === {}){
+	// 	return;
+	// }
 	collision();
 	spawnFood();
 	eat();
 	move();
-	io.emit('incoming data', myJson);
 }
 
 
@@ -92,7 +94,7 @@ io.sockets.on('connection', function(socket){
 			console.log("Create new users: \n\t"+JSON.stringify(tempJson));
 			console.log("MyJSON:"+JSON.stringify(myJson));
 			// Add the new snake into the board
-			addNewSnakeToBoard(tempID, tempJson.coordiate);
+			addNewSnakeToBoard(tempID, tempJson.coordinate);
 			// Send game state data to clients
 			var toEmit = {};
 			toEmit[tempID] = tempJson;
@@ -298,7 +300,7 @@ function findDirection(coordinateArray) {
 function addCoordsToBoard(coordArray, playerID) {
 	for (var i = 0; i < coordArray.length; i++) {
 		var c = coordArray[i];
-		// push into the array at the coordiate
+		// push into the array at the coordinate
 		var ob = {};
 		ob["id"] = playerID;
 		ob["bodyNum"] = i;
@@ -341,7 +343,7 @@ function move() {
 			// Remove old tail from the board
 			for(var i in tempArray){
 				if(tempArray[i].id == id){
-					tempArray.slice(i,1);
+					tempArray.splice(i,1);
 					break;
 				}
 			}
