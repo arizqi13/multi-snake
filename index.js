@@ -42,11 +42,13 @@ initBoard(); // lots of calls to board without initializing
 setInterval(go, 100);
 
 function go() {
+	// if(myJson === {} || board === {}){
+	// 	return;
+	// }
 	collision();
 	spawnFood();
 	eat();
 	move();
-	io.emit('incoming data', myJson);
 }
 
 
@@ -92,7 +94,7 @@ io.sockets.on('connection', function(socket){
 			console.log("Create new users: \n\t"+JSON.stringify(tempJson));
 			console.log("MyJSON:"+JSON.stringify(myJson));
 			// Add the new snake into the board
-			addNewSnakeToBoard(tempID, tempJson.coordiate);
+			// addNewSnakeToBoard(tempID, tempJson.coordinate);
 			// Send game state data to clients
 			var toEmit = {};
 			toEmit[tempID] = tempJson;
@@ -148,7 +150,7 @@ function pickColor(){
 //TODO:
 //Movement, and broadcast data to clients every 60 ms
 
-function gameOver(socketID){
+function gameOver(clientID){
 	return false;
 }
 // add a snake to the board
@@ -316,7 +318,7 @@ function findDirection(coordinateArray) {
 function addCoordsToBoard(coordArray, playerID) {
 	for (var i = 0; i < coordArray.length; i++) {
 		var c = coordArray[i];
-		// push into the array at the coordiate
+		// push into the array at the coordinate
 		var ob = {};
 		ob["id"] = playerID;
 		ob["bodyNum"] = i;
@@ -347,30 +349,30 @@ function move() {
 		else if(d == "left") nx--;
 		else if(d == "up") ny--;
 		else if(d == "down") ny++;
-		var toRemoveFromBoard;
-		var toAddToBoard;
+		// var toRemoveFromBoard;
+		// var toAddToBoard;
 		// make the tail the new head
 		if (player.lengthBuffer == undefined || player.lengthBuffer == 0) {
 			console.log("THE X IS " + nx);
 			var snakeTail = player.coordinate.pop();
 			
-			toRemoveFromBoard = JSON.stringify(snakeTail);
-			var tempArray = board[toRemoveFromBoard];
-			// Remove old tail from the board
-			for(var i in tempArray){
-				if(tempArray[i].id == id){
-					tempArray.slice(i,1);
-					break;
-				}
-			}
+			// toRemoveFromBoard = JSON.stringify(snakeTail);
+			// var tempArray = board[toRemoveFromBoard];
+			// // Remove old tail from the board
+			// for(var i in tempArray){
+			// 	if(tempArray[i].id == id){
+			// 		tempArray.splice(i,1);
+			// 		break;
+			// 	}
+			// }
 
-			board[toRemoveFromBoard] = tempArray;
+			// board[toRemoveFromBoard] = tempArray;
 
 			snakeTail.x = nx;
 			snakeTail.y = ny;
 			player.coordinate.unshift(snakeTail);
 
-			toAddToBoard = JSON.stringify(snakeTail);
+			// toAddToBoard = JSON.stringify(snakeTail);
 
 
 		// make a new head and unshift onto the player.coordinate array
@@ -383,11 +385,11 @@ function move() {
 			player.coordinate.unshift(newHead);
 
 
-			toAddToBoard = JSON.stringify(newHead);
+			// toAddToBoard = JSON.stringify(newHead);
 		}
-		updateBoardAfterMove(player.coordinate, id);
+		// updateBoardAfterMove(player.coordinate, id);
 
-		board[toAddToBoard].unshift({id:id, bodyNum:0});
+		// board[toAddToBoard].unshift({id:id, bodyNum:0});
 	}
 }
 
