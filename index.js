@@ -6,11 +6,9 @@ var io = require('socket.io')(http);
 app.use(express.static('public'));
 
 var MAX_NUM_USER = 5;
-var gridSize = 10;
-var MAX_WIDTH = 1000;
-var maxX = MAX_WIDTH/gridSize;
-var MAX_HEIGHT = 1000;
-var maxY = MAX_HEIGHT/gridSize;
+var gridSize = 6;
+var maxX = 100;
+var maxY = 100;
 var FOOD = null;
 var FOOD_COLOR = 'brown';
 

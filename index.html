@@ -6,7 +6,9 @@
     <link rel="stylesheet" type="text/css" href="game.css">
   </head>
   <body>
-    <h1>
+    <div style="width:80%; margin:auto;">
+    <h1>Snake 461</h1>
+    <hr>
     <div id="signUp">
       <p>
           <input id="nickName" type="text" placeholder="Your desired nickName">
@@ -17,7 +19,7 @@
       <button id="join">JOIN</button>
     </div>
     <div class="container-fluid row">
-      <div id="controls" class="col-md-2 vcenter">
+      <div id="controls" class="col-lg-2 vcenter">
         <div class="container-fluid">
           <div class="row">
             <div class="col-sm-4"></div>
@@ -36,18 +38,20 @@
           </div>
         </div>
       </div><!--
-    --><div id="gameBoard" class="col-md-8 vcenter">
-          <canvas id="gameField" width="1000px" height="1000px"></canvas>
+    --><div id="gameBoard" class="col-lg-8 vcenter">
+          <canvas id="gameField" width="600px" height="600px"></canvas>
           <form method="get" action="/">
             <button type="submit">Restart</button>
           </form>
         </div><!--
-    --><div id="score" class="col-md-2 vcenter">
+    --><div id="score" class="col-lg-2 vcenter">
               <h1 id="playerInfo"></h1>
               <table id="scoreList" border="1" cellpadding="5" cellspacing="5" align="center"></table>
+              <br>
         </div>
 
       </div>
+    </div>
     <script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
       <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="game.js"></script>
