@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <head>
     <title>The Multiplayer Snake Game</title>
     <link rel="stylesheet" type="text/css" href="game.css">
@@ -12,20 +13,23 @@
       </p>
       <button id="join">JOIN</button>
     </div>
-    
-    <div id="gameBoard">
-      <canvas id="gameField" width="1000px" height="1000px"></canvas>
-      <form method="get" action="/">
-          <button type="submit">Restart</button>
-      </form>
-
-        <div id="score">
-          <h1 id="playerInfo"></h1>
-          <h3 id="highScore"></h3>
-          <ul id="scoreList"></ul>
+    <div class="container-fluid">
+      <div id="controls" class="col-md-2"> 
       </div>
-    </div>
 
+        <div id="gameBoard" class="col-md-8">
+          <canvas id="gameField" width="1000px" height="1000px"></canvas>
+          <form method="get" action="/">
+            <button type="submit">Restart</button>
+          </form>
+        </div>
+        <div id="score" class="col-md-2">
+              <h1 id="playerInfo"></h1>
+              <h3 id="highScore"></h3>
+              <ul id="scoreList"></ul>
+        </div>
+
+      </div>
     <script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
       <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="game.js"></script>
