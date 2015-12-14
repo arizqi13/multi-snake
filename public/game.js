@@ -23,7 +23,7 @@ $(document).ready(function(){
   controlsDiv.hide();
   scoreDiv.hide();
 
-  $('#photos').fadeIn(1000).fadeOut(4500);
+  $('#photos').fadeIn(1000).delay(500).fadeOut(4500);
 });
 
 $('#join').click(function(){
@@ -211,13 +211,14 @@ $(function() {
   // $('#photos').fadeOut(4500);
   setInterval(function() {
     $('#photos').attr('src',imgs[i])
-      .fadeIn(1000)
-      .fadeOut(4500)
+      .fadeIn(2500)
+      .delay(500)
+      .fadeOut(3000)
       if(i == imgs.length-1) {
         i = 0;
       } else {
         i++;
       }
-  },  5500);
+  },  6000);
 
 });
