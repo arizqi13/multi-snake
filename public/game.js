@@ -114,8 +114,9 @@ socket.on('incoming data', function(data){
         gameInfo.scoreBoard = data.scoreBoard;
         displayScoreBoard(gameInfo);
       }
-      render(data.players[player].color, data.players[player].coordinate, data.players[player].nickname);
-      console.log("id:"+client.id+"\t nick:"+client.nickName);
+      var p = data.players[player];
+      render(p.color, p.coordinate, p.nickname);
+      console.log("id:"+client.id+"\t nick:"+client.snickName);
     }
   }
 });
