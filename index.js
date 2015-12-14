@@ -11,6 +11,7 @@ var maxX = MAX_WIDTH/5;
 var MAX_HEIGHT = 500;
 var maxY = MAX_HEIGHT/5;
 var FOOD = null;
+var FOOD_COLOR = 'brown';
 
 // Sample Json format
 // var myJson = {"players": {
@@ -30,6 +31,7 @@ var clientSockets = {};
 var myJson = {};
 var board = {};
 myJson["players"] = {};
+myJson.food = {coordinate:null, color: FOOD_COLOR};
 var availableColors = ["black","red","orange","green","blue"];
 var colorInUsed = [];
 var diePlayer = [];
@@ -43,7 +45,7 @@ var tempID;
 // if it's undefined. I do this. EZ fix sets all possible
 // coordinates to []. 
 
-setInterval(go, 500);
+setInterval(go, 100);
 
 function go() {
   if(myJson.players === {} || board === {}){
@@ -96,6 +98,7 @@ io.sockets.on('connection', function(socket){
         console.log("Found New Coordinate:" + JSON.stringify(tempJson.coordinate));
         console.log(">>"+JSON.stringify(tempJson.coordinate[0]));
         tempJson.direction = findDirection(tempJson.coordinate);
+        tempJson.lengthBuffer = 0;
         myJson.players[clientData.id] = tempJson;
         console.log("Create new users: \n\t"+JSON.stringify(tempJson));
         console.log("MyJSON:"+JSON.stringify(myJson));
@@ -428,7 +431,7 @@ function move() {
       };
       player.coordinate.unshift(newHead);
 
-
+      console.log(player.coordinate);
       // toAddToBoard = JSON.stringify(newHead);
     }
     // updateBoardAfterMove(player.coordinate, id);
@@ -464,10 +467,12 @@ function eat() {
 	var id;
 	var foodCoordinate = JSON.stringify(myJson.food.coordinate);
 	var snake = board[foodCoordinate];
+		console.log(snake);
 	if (snake == undefined || snake == null	|| snake.length == 0) {
 		return;
 	} else {
-		all[snake[0]['id']].lengthBuffer++;
+		console.log(all[snake[0].id].coordinate);
+		all[snake[0].id].lengthBuffer++;
 		myJson.food.coordinate = null;
 	}
 
@@ -483,13 +488,12 @@ function eat() {
 	// }
 }
 
-var FOOD_COLOR = "cyan";
 function spawnFood() {
 	// TODO: maxX and maxY subject to change
-	if (myJson.food == null || myJson.food == undefined) {
-		myJson.food = {};
+	if (!myJson.food.coordinate) {
+		// myJson.food = {};
 		myJson.food["coordinate"] = findOpenSquare(0, maxX - 1, 0, maxY - 1);
-		myJson.food["color"] = FOOD_COLOR;
+		// myJson.food["color"] = FOOD_COLOR;
 	}
 }
 
