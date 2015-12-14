@@ -1,7 +1,7 @@
 var socket = io();
 var canvas = document.getElementById('gameField');
 var context = canvas.getContext('2d');
-var gridSize = 10;
+var gridSize = 6;
 
 // an object stores basic info of player: id, nickName, current direction
 var client = {};

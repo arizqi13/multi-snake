@@ -2,6 +2,12 @@ body {
 	background-color: black;
 	color: white;
 	text-align: center;
+	font-family: 'klavikalight', Helvetica, Arial, sans-serif;
+}
+
+@font-face {
+  font-family: 'klavikalight';
+  src: url("ufonts.com_klavika-light-opentype.otf");
 }
 
 canvas {
@@ -49,4 +55,9 @@ canvas {
 table {
 	margin-left: auto;
 	margin-right: auto;
+	font-size: 15pt;
+}
+
+button {
+	color: black;
 }
