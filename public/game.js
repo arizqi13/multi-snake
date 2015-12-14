@@ -128,6 +128,7 @@ function displayScoreBoard(data){
     var topPlayer = Object.keys(data.scoreBoard[0])[0];
     highScore.text(topPlayer + ' ' + data.scoreBoard[0][topPlayer]);
     var scoreList = $('#scoreList');
+    scoreList.empty();
     for(var i = 1  in data.scoreBoard) {
       var cur = Object.keys(data.scoreBoard[i])[0];
       scoreList.append('<li>' + cur + ' ' + data.scoreBoard[i][cur] + '</li>');

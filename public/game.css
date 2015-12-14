@@ -8,3 +8,8 @@ canvas {
 	border: 1px solid red;
 	background-color: white;
 }
+
+#score {
+	background-color: darkblue;
+	color: pink;
+}

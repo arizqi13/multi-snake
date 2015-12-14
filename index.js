@@ -38,7 +38,7 @@ var board = {};
 myJson["players"] = {};
 myJson.food = {coordinate:null, color: FOOD_COLOR};
 myJson.scoreBoard = [
-	{'xxx':0},{'xxx':0},{'xxx':0},{'xxx':0},{'xxx':0}
+	{'xxx':4},{'xxx':3},{'xxx':2},{'xxx':1},{'xxx':0}
 ];
 var availableColors = ["black","red","orange","green","blue"];
 var colorInUsed = [];
@@ -304,21 +304,26 @@ function updateBoard() {
     }
 
     // update score board
+    var newScore = {};
+	newScore[all[id].nickname] = player.length;
+
     var scb = myJson.scoreBoard;
+    var str = JSON.stringify(scb);
+    if (str.indexOf(JSON.stringify(newScore)) > -1) {
+		continue;
+	}
     for (var i = 0; i < myJson.scoreBoard.length; i++) {
     	var oldVal = scb[i];
-    	console.log(oldVal);
+    	// console.log(oldVal);
     	if (player.length >= oldVal[Object.keys(oldVal)]) {
     		scb.pop();
-    		var newScore = {};
-    		newScore[all[id].nickname] = player.length;
     		scb.splice(i, 0, newScore);
     		break;
     	}
     }
   }
 
-  console.log(myJson.scoreBoard);
+  // console.log(myJson.scoreBoard);
 }
 //////////////////////////////////////////////////////////
 // Tad's space
