@@ -6,10 +6,11 @@ var io = require('socket.io')(http);
 app.use(express.static('public'));
 
 var MAX_NUM_USER = 5;
-var MAX_WIDTH = 500;
-var maxX = MAX_WIDTH/5;
-var MAX_HEIGHT = 500;
-var maxY = MAX_HEIGHT/5;
+var gridSize = 10;
+var MAX_WIDTH = 1000;
+var maxX = MAX_WIDTH/gridSize;
+var MAX_HEIGHT = 1000;
+var maxY = MAX_HEIGHT/gridSize;
 var FOOD = null;
 var FOOD_COLOR = 'brown';
 
@@ -105,6 +106,7 @@ io.sockets.on('connection', function(socket){
         // Send game initial direction to clients
         socket.emit('confirm join', tempJson.direction);
         clientSockets[clientData.id] = socket.id;
+        socket.clientID = clientData.id;
       }
       // Send game state data to user
       io.emit('incoming data', myJson);
@@ -133,6 +135,8 @@ io.sockets.on('connection', function(socket){
   // When the user disconnect
   socket.on('disconnect', function(){
     console.log('disconnect user: ' + socket.id);
+    delete myJson.players[socket.clientID];
+    console.log('removed user data');
   });
 });
 

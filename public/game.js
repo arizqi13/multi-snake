@@ -1,7 +1,7 @@
 var socket = io();
 var canvas = document.getElementById('gameField');
 var context = canvas.getContext('2d');
-var gridSize = 5;
+var gridSize = 10;
 
 // an object stores basic info of player: id, nickName, current direction
 var client = {};
@@ -103,9 +103,9 @@ function render(color, coordinates){
 // plot a cell on canvas using the given coordinate obj {x:y} and color
 function display(coordinate, color) {
   context.fillStyle = color;
-  context.fillRect(coordinate.x * gridSize, coordinate.y * gridSize, 5, 5);
+  context.fillRect(coordinate.x * gridSize, coordinate.y * gridSize, gridSize, gridSize);
   context.strokeStyle = "white";
-  context.strokeRect(coordinate.x * gridSize, coordinate.y * gridSize, 5, 5);
+  context.strokeRect(coordinate.x * gridSize, coordinate.y * gridSize, gridSize, gridSize);
 }
 
 // reset the canvas before redraw the new state of the game
