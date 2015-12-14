@@ -18,6 +18,7 @@ var scoreDiv = $('#score');
 // request to join the game, starts when load the page
 $(document).ready(function(){
   $('#photos').hide();
+  $('#gameover').hide();
   signUpDiv.show();
   gameBoardDiv.hide();
   controlsDiv.hide();
@@ -51,9 +52,14 @@ socket.on('confirm join', function(initialDirection){
 
 // receive game over signal
 socket.on('game over', function(){
-    alert("Sorry, you've lost this game.");
-    // Reload the page
-    location.reload();
+    $("#gameover").fadeIn(3000);
+
+    setTimeout(function(){
+    context.fillStyle = "black";
+    context.globalAlpha = 0.4;
+    context.fillRect(0,0,600,600);
+    context.globalAlpha = 1;
+  }, 1000);
 });
 
 // when player hits a key, combine the current and the keypress

@@ -74,3 +74,12 @@ button {
 }
 
 
+#gameover {
+	z-index: 1;
+	position: absolute;
+	width: 100%;
+	font-size: 40px;
+	top:40%;
+	color: red;
+}
+
