@@ -14,6 +14,8 @@ var maxY = MAX_HEIGHT/gridSize;
 var FOOD = null;
 var FOOD_COLOR = 'brown';
 
+var INTERVAL = 100;
+
 /*// Sample Json format
 // var myJson = {"players": {
 //  "id1": {nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2},{"x":1,"y":2}], "direction":"up", "lengthBuffer":2},
@@ -53,7 +55,7 @@ var tempID;
 // if it's undefined. I do this. EZ fix sets all possible
 // coordinates to []. 
 
-setInterval(go, 100);
+setInterval(go, INTERVAL);
 
 function go() {
   if(myJson.players === {} || board === {}){
@@ -314,8 +316,12 @@ function updateBoard() {
 	}
     for (var i = 0; i < myJson.scoreBoard.length; i++) {
     	var oldVal = scb[i];
-    	// console.log(oldVal);
-    	if (player.length >= oldVal[Object.keys(oldVal)]) {
+    	var oldNick = Object.keys(oldVal);
+    	if (player.length >= oldVal[oldNick]) {
+    		if (all[id].nickname == oldNick) {
+    			scb[i] = newScore;
+    			break;
+    		}
     		scb.pop();
     		scb.splice(i, 0, newScore);
     		break;
