@@ -12,6 +12,8 @@ var maxY = 100;
 var FOOD = null;
 var FOOD_COLOR = 'brown';
 
+var INTERVAL = 70;
+
 /*// Sample Json format
 // var myJson = {"players": {
 //  "id1": {nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2},{"x":1,"y":2}], "direction":"up", "lengthBuffer":2},
@@ -41,6 +43,7 @@ myJson.scoreBoard = [
 var availableColors = ["black","red","orange","green","blue"];
 var colorInUsed = [];
 var diePlayer = [];
+var directionBuffer = {};
 
 var currentCoord = [0,0];
 var tempNick;
@@ -51,13 +54,13 @@ var tempID;
 // if it's undefined. I do this. EZ fix sets all possible
 // coordinates to []. 
 
-setInterval(go, 100);
+setInterval(go, INTERVAL);
 
 function go() {
-  if(myJson.players === {} || board === {}){
+  if(!Object.keys(myJson.players).length){
    return;
   }
-  console.log(myJson.players);
+  //console.log(myJson.players);
   updateBoard();
   //console.log(board);
   collision();
@@ -87,7 +90,7 @@ app.get('/game.html', function(req, res) {
 io.sockets.on('connection', function(socket){
   console.log('connected to client:' + socket.id);
   var currentClient = socket.id;
-  console.log("tempID:" + tempID);
+  //console.log("tempID:" + tempID);
   // Assign an id for the new user
   socket.on('join', function(clientData){
 
@@ -106,6 +109,10 @@ io.sockets.on('connection', function(socket){
         tempJson.direction = findDirection(tempJson.coordinate);
         tempJson.lengthBuffer = 0;
         myJson.players[clientData.id] = tempJson;
+
+        // directionBuffer
+        directionBuffer[clientData.id] = [];
+
         console.log("Create new users: \n\t"+JSON.stringify(tempJson));
         console.log("MyJSON:"+JSON.stringify(myJson));
         // Send game initial direction to clients
@@ -122,15 +129,18 @@ io.sockets.on('connection', function(socket){
   // Receiving new key press from the client
   socket.on('key', function(data){
     if(data != undefined){
-      console.log("Received data:" + data);
       var direction = data.direction;
-      console.log("Received direction:" + direction);
       var userID = data.id;
+      // var userJson = myJson.players[userID];
+      
+      console.log("Received data:" + data);
+      console.log("Received direction:" + direction);
       console.log("MyJSON:"+JSON.stringify(myJson));
-      var userJson = myJson.players[userID];
       console.log('receive key action:' + JSON.stringify(data));
+      
       if(direction === 'up' || direction === 'down' || direction === 'right' || direction === 'left') {
-        userJson["direction"] = direction;
+        // userJson["direction"] = direction;
+        directionBuffer[userID].push(direction);
       }
       // io.emit('incoming data', currentCoord);
       console.log('updated client direction');
@@ -223,8 +233,8 @@ function collision() {
     // if > 1, collision with player happen
     if (square.length > 1) {
       // TODO: update for >2 players collision
-      console.log(square);
-      console.log(id);
+      //console.log(square);
+      //console.log(id);
 
       var enemy;
       for (var i = 0; i < square.length; i++) {
@@ -255,7 +265,7 @@ function collision() {
       }
       // var enemy = square.splice(0, 0)[0];
       var enemyBody = all[enemy.id].coordinate;
-      console.log(enemyBody);
+      //console.log(enemyBody);
       var eaten = enemyBody.length - enemy.bodyNum;
       if (eaten >= player.coordinate.length) {
         // gameOver(id);
@@ -288,8 +298,11 @@ function updateBoard() {
   var all = myJson.players;
   board = {};
   var id;
+  // console.log(all);
   for (id in all) {
     var player = all[id].coordinate;
+
+  // console.log("gameboard");
 
     // update game board
     for (var i = 0; i < player.length; i++) {
@@ -300,6 +313,16 @@ function updateBoard() {
       }
       board[location].push({'id': id, 'bodyNum': i});
     }
+
+  // console.log("scoreboard");
+
+    // update direction
+	var arr = directionBuffer[id];
+	// console.log(arr);
+
+	if (arr && arr.length > 0) {
+		myJson.players[id].direction = arr.shift();
+	}
 
     // update score board
     var newScore = {};
@@ -312,8 +335,12 @@ function updateBoard() {
 	}
     for (var i = 0; i < myJson.scoreBoard.length; i++) {
     	var oldVal = scb[i];
-    	// console.log(oldVal);
-    	if (player.length >= oldVal[Object.keys(oldVal)]) {
+    	var oldNick = Object.keys(oldVal);
+    	if (player.length >= oldVal[oldNick]) {
+    		if (all[id].nickname == oldNick) {
+    			scb[i] = newScore;
+    			break;
+    		}
     		scb.pop();
     		scb.splice(i, 0, newScore);
     		break;
@@ -430,7 +457,7 @@ function move() {
     // var toAddToBoard;
     // make the tail the new head
     if (player.lengthBuffer == undefined || player.lengthBuffer == 0) {
-      console.log("THE X IS " + nx);
+      //console.log("THE X IS " + nx);
       player.coordinate.pop();
       
       // toRemoveFromBoard = JSON.stringify(snakeTail);
@@ -461,7 +488,7 @@ function move() {
       };
       player.coordinate.unshift(newHead);
 
-      console.log(player.coordinate);
+      //console.log(player.coordinate);
       // toAddToBoard = JSON.stringify(newHead);
     }
     // updateBoardAfterMove(player.coordinate, id);
@@ -497,12 +524,12 @@ function eat() {
 	var id;
 	var foodCoordinate = JSON.stringify(myJson.food.coordinate);
 	var snake = board[foodCoordinate];
-		console.log(snake);
+		//console.log(snake);
 	if (snake == undefined || snake == null	|| snake.length == 0) {
 		return;
 	} else {
-		console.log(all[snake[0].id].coordinate);
-		all[snake[0].id].lengthBuffer++;
+		//console.log(all[snake[0].id].coordinate);
+		all[snake[0].id].lengthBuffer+=10;
 		myJson.food.coordinate = null;
 	}
 
