@@ -12,7 +12,8 @@ var maxY = 100;
 var FOOD = null;
 var FOOD_COLOR = 'brown';
 
-var INTERVAL = 70;
+// var INTERVAL = 70;
+var INTERVAL = process.argv[3] || 70; // command arg for interval, needs to have port# argument first
 
 /*
 Sample Json format
