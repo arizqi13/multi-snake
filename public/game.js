@@ -12,11 +12,15 @@ client["direction"] = null;
 // div tags of index.html
 var signUpDiv = $('#signUp');
 var gameBoardDiv = $('#gameBoard');
+var controlsDiv = $('#controls');
+var scoreDiv = $('#score');
 
 // request to join the game, starts when load the page
 $(document).ready(function(){
   signUpDiv.show();
   gameBoardDiv.hide();
+  controlsDiv.hide();
+  scoreDiv.hide();
 });
 
 $('#join').click(function(){
@@ -35,6 +39,10 @@ socket.on('confirm join', function(initialDirection){
     client.direction = initialDirection;
     signUpDiv.hide();
     gameBoardDiv.show();
+    scoreDiv.show();
+    if($('#useOnScreen').is(':checked')){
+      controlsDiv.show();
+    }
   }
 });
 
@@ -50,33 +58,39 @@ socket.on('game over', function(){
 $(document).keydown(function(e){
   var charCode = (e.which) ? e.which : e.keyCode;
   if(client.id != null && client.nickName != null && client.direction != null){
-    var data = {};
-    data.id = client.id;
-    if((charCode === 38 || charCode === 87) && client.direction != 'down' && client.direction != 'up') {
+    if(charCode === 38 || charCode === 87) {
     // Up arrow
-      data.direction = 'up';
-      client.direction = 'up';
-      socket.emit('key',data);
-    } else if((charCode === 40 || charCode === 83) && client.direction != 'up' && client.direction != 'down') {
+      sendKey('up');
+    } else if(charCode === 40 || charCode === 83) {
     // Down arrow
-      data.direction = 'down';
-      client.direction = 'down';
-      socket.emit('key',data);
-    } else if((charCode === 39 || charCode === 68) && client.direction != 'left' && client.direction != 'right') {
+      sendKey('down');
+    } else if(charCode === 39 || charCode === 68) {
     // Right arrow
-      data.direction = 'right';
-      client.direction = 'right';
-      socket.emit('key',data);
-    } else if((charCode === 37 || charCode === 65) && client.direction != 'right' && client.direction != 'left') {
+      sendKey('right');
+    } else if(charCode === 37 || charCode === 65) {
     // Left arrow
-      data.direction = 'left';
-      client.direction = 'left';
-      socket.emit('key',data);
-    } else {
-    // Not a control key
+      sendKey('left');
     }
   }
 });
+
+// send key when on screen keyboard is hit
+$('#upKey').click(function() {
+  sendKey('up');
+});
+
+$('#downKey').click(function() {
+  sendKey('down');
+});
+
+$('#leftKey').click(function() {
+  sendKey('left');
+});
+
+$('#rightKey').click(function() {
+  sendKey('right');
+});
+
 
 // receive updates from the server, use this to render the snakes and food
 socket.on('incoming data', function(data){
@@ -150,4 +164,29 @@ function resetCanvas(){
 function newID(){
   var randomlyGeneratedUID = Math.random().toString(36).substring(3,16)+ +new Date;
   return randomlyGeneratedUID;
+}
+
+function sendKey(key){
+  if(client.id != null && client.nickName != null && client.direction != null){
+    var data = {};
+    data.id = client.id;
+    if( key =='up' && client.direction != 'down' && client.direction != 'up') {
+    // Up arrow
+      data.direction = 'up';
+      client.direction = 'up';
+    } else if( key == 'down' && client.direction != 'up' && client.direction != 'down') {
+    // Down arrow
+      data.direction = 'down';
+      client.direction = 'down';
+    } else if( key == 'right' && client.direction != 'left' && client.direction != 'right') {
+    // Right arrow
+      data.direction = 'right';
+      client.direction = 'right';
+    } else if( key == 'left' && client.direction != 'right' && client.direction != 'left') {
+    // Left arrow
+      data.direction = 'left';
+      client.direction = 'left';
+    }
+    socket.emit('key',data);
+  }
 }

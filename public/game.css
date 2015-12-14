@@ -9,7 +9,39 @@ canvas {
 	background-color: white;
 }
 
+#nickName {
+	color: black;
+	
+}
+
 #score {
-	background-color: darkblue;
-	color: pink;
+	background-color: pink;
+	color: red;
+	background-color: white;
+}
+
+.square {
+	color: black;
+	font-size: 28pt;
+	text-align: center;
+	width: 50px;
+	height: 50px;
+}
+
+.key {
+	background-color: cyan;
+	border: 2px solid white;
+	border-radius: 25px;
+}
+
+#onscreenKey {
+	width: 150px;
+	height: 150px;
+	padding: 0px;
+}
+
+.vcenter {
+	display: inline-block;
+	vertical-align: middle;
+	float: none;
 }

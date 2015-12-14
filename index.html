@@ -11,19 +11,38 @@
       <p>
           <input id="nickName" type="text" placeholder="Your desired nickName">
       </p>
+      <p>
+          <input id="useOnScreen" type="checkbox">Use On Screen Keyboard<br>
+      </p>
       <button id="join">JOIN</button>
     </div>
-    <div class="container-fluid">
-      <div id="controls" class="col-md-2"> 
-      </div>
-
-        <div id="gameBoard" class="col-md-8">
+    <div class="container-fluid row">
+      <div id="controls" class="col-md-2 vcenter">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4 key" id="upKey">&#8593;</div>
+            <div class="col-sm-4"></div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4 key" id="leftKey">&#8592;</div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4 key" id="rightKey">&#8594;</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4 key" id="downKey">&#8595;</div>
+            <div class="col-sm-4"></div>
+          </div>
+        </div>
+      </div><!--
+    --><div id="gameBoard" class="col-md-8 vcenter">
           <canvas id="gameField" width="1000px" height="1000px"></canvas>
           <form method="get" action="/">
             <button type="submit">Restart</button>
           </form>
-        </div>
-        <div id="score" class="col-md-2">
+        </div><!--
+    --><div id="score" class="col-md-2 vcenter">
               <h1 id="playerInfo"></h1>
               <h3 id="highScore"></h3>
               <ul id="scoreList"></ul>
