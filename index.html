@@ -1,23 +1,67 @@
 <!doctype html>
 <html>
-	<head>
-		<title>The Multiplayer Snake Game</title>
-		<link rel="stylesheet" type="text/css" href="game.css">
-	</head>
-	<body>
-		<div>
-			<p>
-				<form id="userInput" action="/game.html" method="get" target="_blank">
-					Player's Nickname:<br>
-					<input name="nickName" type="text" placeholder="Your desired nickName">
-					<br>
-					Your ID:<br>
-					<input type="text" name="ID" id="id" value="" readonly>
-					<br>
-					<input type="submit" value="Join!">
-				</form>
-			</p>
-		</div>
-		<script type="text/javascript" src="clientIndex.js"></script>
-	</body>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <head>
+    <title>The Multiplayer Snake Game</title>
+    <link rel="stylesheet" type="text/css" href="game.css">
+  </head>
+  <body>
+    <div style="width:80%; margin:auto;">
+    <h1>Snake 461</h1>
+    <hr>
+    <div id="signUp">
+      <p>
+          <input id="nickName" type="text" placeholder="Your desired nickName">
+      </p>
+      <p>
+          <input id="useOnScreen" type="checkbox">Use On Screen Keyboard<br>
+      </p>
+      <button id="join">JOIN</button>
+
+      <div id="slideshow"><br><br><img id="photos" src="images/5.png"></div>
+    </div>
+    <div class="container-fluid row">
+      <div id="controls" class="col-lg-2 vcenter">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4 key" id="upKey">&#8593;</div>
+            <div class="col-sm-4"></div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4 key" id="leftKey">&#8592;</div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4 key" id="rightKey">&#8594;</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4 key" id="downKey">&#8595;</div>
+            <div class="col-sm-4"></div>
+          </div>
+        </div>
+      </div><!--
+    --><div id="gameBoard" class="col-lg-8 vcenter">
+          <canvas id="gameField" width="600px" height="600px"></canvas>
+          <div id="gameover">
+            <p>! Game over !</p>
+            <a href="">Replay</a>
+          </div>
+          <form method="get" action="/">
+            <button type="submit">Restart</button>
+          </form>
+        </div><!--
+    --><div id="score" class="col-lg-2 vcenter">
+              <h1 id="playerInfo"></h1>
+              <table id="scoreList" border="0" cellpadding="5" cellspacing="5"></table>
+              <br>
+        </div>
+
+      </div>
+      <hr>
+      <div>&copy; VAT's 461 Project - Alfian Rizqi - Tadrill Perry - Vu Nguyen.  All Rights Reserved</div>
+    </div>
+    <script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
+      <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="game.js"></script>
+  </body>
 </html>

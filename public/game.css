@@ -2,11 +2,84 @@ body {
 	background-color: black;
 	color: white;
 	text-align: center;
+	font-family: 'klavikalight', Helvetica, Arial, sans-serif;
+}
+
+@font-face {
+  font-family: 'klavikalight';
+  src: url("ufonts.com_klavika-light-opentype.otf");
 }
 
 canvas {
-	width: 500px;
-	height: 500px;
 	border: 1px solid red;
 	background-color: white;
 }
+
+#nickName {
+	color: black;
+
+}
+
+#score {
+	color: #6A5ACD;
+	background-color: white;
+}
+
+.square {
+	color: black;
+	font-size: 28pt;
+	text-align: center;
+	width: 50px;
+	height: 50px;
+}
+
+.key {
+	background-color: cyan;
+	border: 2px solid white;
+	border-radius: 25px;
+}
+
+#onscreenKey {
+	width: 150px;
+	height: 150px;
+	padding: 0px;
+}
+
+.vcenter {
+	display: inline-block;
+	vertical-align: middle;
+	float: none;
+}
+
+table {
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 15pt;
+}
+
+th, td, tr {
+	padding: 15px;
+    text-align: center;
+}
+
+button {
+	color: black;
+}
+
+#photos {
+	width: 500px;
+	height: 500px;
+	border: solid 1px white;
+	border-radius: 10px;
+}
+
+
+#gameover {
+	z-index: 1;
+	position: absolute;
+	width: 100%;
+	font-size: 40px;
+	top:40%;
+	color: red;
+}
+
