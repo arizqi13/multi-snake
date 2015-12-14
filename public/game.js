@@ -9,10 +9,14 @@ client["nickName"] = null;
 client["id"] = null;
 client["direction"] = null;
 
+// div tags of index.html
+var signUpDiv = $('#signUp');
+var gameBoardDiv = $('#gameBoard');
+
 // request to join the game, starts when load the page
 $(document).ready(function(){
-  $('#signUp').show();
-  $('#gameBoard').hide();
+  signUpDiv.show();
+  gameBoardDiv.hide();
 });
 
 $('#join').click(function(){
@@ -29,8 +33,8 @@ $('#join').click(function(){
 socket.on('confirm join', function(initialDirection){
   if(initialDirection != undefined){
     client.direction = initialDirection;
-    $('#signUp').hide();
-    $('#gameBoard').show();
+    signUpDiv.hide();
+    gameBoardDiv.show();
   }
 });
 
@@ -79,14 +83,20 @@ socket.on('incoming data', function(data){
   if(data != undefined) {
     resetCanvas();
     // render the food
-
-    console.log("THE FOOD is " + JSON.stringify(data.food));
     if(data.food != undefined){
-    
       display(data.food.coordinate, data.food.color);
     }
     // render the players
     for(var player in data.players){
+      // get the info of current Player and the scoreBoard to display
+      if(player == client.id){
+        var gameInfo = {};
+        gameInfo.nickName = data.players[player].nickname;
+        gameInfo.color = data.players[player].color;
+        gameInfo.size = data.players[player].coordinate.length;
+        gameInfo.scoreBoard = data.scoreBoard;
+        displayScoreBoard(gameInfo);
+      }
       render(data.players[player].color, data.players[player].coordinate);
       console.log("id:"+client.id+"\t nick:"+client.snickName);
     }
@@ -106,6 +116,25 @@ function display(coordinate, color) {
   context.fillRect(coordinate.x * gridSize, coordinate.y * gridSize, gridSize, gridSize);
   context.strokeStyle = "white";
   context.strokeRect(coordinate.x * gridSize, coordinate.y * gridSize, gridSize, gridSize);
+}
+
+function displayScoreBoard(data){
+  if(data){
+    var playerInfo = $('#playerInfo');
+    playerInfo.text(data.nickName + ' ' + data.size);
+    playerInfo.css("color", data.color);
+
+    var highScore = $('#highScore');
+    var topPlayer = Object.keys(data.scoreBoard[0])[0];
+    highScore.text(topPlayer + ' ' + data.scoreBoard[0][topPlayer]);
+    var scoreList = $('#scoreList');
+    for(var i = 1  in data.scoreBoard) {
+      var cur = Object.keys(data.scoreBoard[i])[0];
+      scoreList.append('<li>' + cur + ' ' + data.scoreBoard[i][cur] + '</li>');
+    }
+
+
+  }
 }
 
 // reset the canvas before redraw the new state of the game

@@ -5,6 +5,7 @@
     <link rel="stylesheet" type="text/css" href="game.css">
   </head>
   <body>
+    <h1>
     <div id="signUp">
       <p>
           <input id="nickName" type="text" placeholder="Your desired nickName">
@@ -17,6 +18,13 @@
       <form method="get" action="/">
           <button type="submit">Restart</button>
       </form>
+
+        <div id="score">
+          <h1 id="playerInfo"></h1>
+          <h3 id="highScore">
+          <ul id="scoreList"></ul>
+        </h3>
+      </div>
     </div>
 
     <script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
