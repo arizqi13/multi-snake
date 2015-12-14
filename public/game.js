@@ -1,7 +1,43 @@
+//The main update loop runs on requestAnimationFrame,
+//Which falls back to a setTimeout loop on the server
+//Code below is from Three.js, and sourced from links below
+
+    // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+    // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+
+    // requestAnimationFrame polyfill by Erik Möller
+    // fixes from Paul Irish and Tino Zijdel
+
+( function () {
+
+    var lastTime = 0;
+    var vendors = [ 'ms', 'moz', 'webkit', 'o' ];
+
+    for ( var x = 0; x < vendors.length && !window.requestAnimationFrame; ++ x ) {
+        window.requestAnimationFrame = window[ vendors[ x ] + 'RequestAnimationFrame' ];
+        window.cancelAnimationFrame = window[ vendors[ x ] + 'CancelAnimationFrame' ] || window[ vendors[ x ] + 'CancelRequestAnimationFrame' ];
+    }
+
+    if ( !window.requestAnimationFrame ) {
+        window.requestAnimationFrame = function ( callback, element ) {
+            var currTime = Date.now(), timeToCall = Math.max( 0, frame_time - ( currTime - lastTime ) );
+            var id = window.setTimeout( function() { callback( currTime + timeToCall ); }, timeToCall );
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+    }
+
+    if ( !window.cancelAnimationFrame ) {
+        window.cancelAnimationFrame = function ( id ) { clearTimeout( id ); };
+    }
+
+}() );
+
 var socket = io();
 var canvas = document.getElementById('gameField');
 var context = canvas.getContext('2d');
 var gridSize = 6;
+var die = false;
 
 // an object stores basic info of player: id, nickName, current direction
 var client = {};
@@ -18,12 +54,13 @@ var scoreDiv = $('#score');
 // request to join the game, starts when load the page
 $(document).ready(function(){
   $('#photos').hide();
+  $('#gameover').hide();
   signUpDiv.show();
   gameBoardDiv.hide();
   controlsDiv.hide();
   scoreDiv.hide();
 
-  $('#photos').fadeIn(1000).fadeOut(4500);
+  $('#photos').fadeIn(1000).delay(500).fadeOut(4500);
 });
 
 $('#join').click(function(){
@@ -51,9 +88,31 @@ socket.on('confirm join', function(initialDirection){
 
 // receive game over signal
 socket.on('game over', function(){
-    alert("Sorry, you've lost this game.");
-    // Reload the page
-    location.reload();
+    $("#gameover").fadeIn(3000);
+
+    die = true;
+    var nextTime = new Date().getTime();
+    var alpha = 0;
+    var pace = 1000;
+    function fade(){
+      if(new Date().getTime() > nextTime){
+        nextTime = new Date().getTime() + pace;
+       
+        if(alpha > 0.5){
+          alpha = 0;
+        }
+        
+        alpha = (alpha * 100 + 1)/100;
+        
+      }
+
+      context.fillStyle = "black";
+      context.globalAlpha = alpha;
+      context.fillRect(0,0,600,600);
+      requestAnimationFrame(fade);
+    }
+
+    fade();
 });
 
 // when player hits a key, combine the current and the keypress
@@ -97,7 +156,7 @@ $('#rightKey').click(function() {
 
 // receive updates from the server, use this to render the snakes and food
 socket.on('incoming data', function(data){
-  if(data != undefined) {
+  if(data != undefined && !die) {
     resetCanvas();
     // render the food
     if(data.food != undefined){
@@ -211,13 +270,14 @@ $(function() {
   // $('#photos').fadeOut(4500);
   setInterval(function() {
     $('#photos').attr('src',imgs[i])
-      .fadeIn(1000)
-      .fadeOut(4500)
+      .fadeIn(2500)
+      .delay(500)
+      .fadeOut(3000)
       if(i == imgs.length-1) {
         i = 0;
       } else {
         i++;
       }
-  },  5500);
+  },  6000);
 
 });
