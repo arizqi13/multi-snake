@@ -1,3 +1,38 @@
+//The main update loop runs on requestAnimationFrame,
+//Which falls back to a setTimeout loop on the server
+//Code below is from Three.js, and sourced from links below
+
+    // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+    // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+
+    // requestAnimationFrame polyfill by Erik Möller
+    // fixes from Paul Irish and Tino Zijdel
+
+( function () {
+
+    var lastTime = 0;
+    var vendors = [ 'ms', 'moz', 'webkit', 'o' ];
+
+    for ( var x = 0; x < vendors.length && !window.requestAnimationFrame; ++ x ) {
+        window.requestAnimationFrame = window[ vendors[ x ] + 'RequestAnimationFrame' ];
+        window.cancelAnimationFrame = window[ vendors[ x ] + 'CancelAnimationFrame' ] || window[ vendors[ x ] + 'CancelRequestAnimationFrame' ];
+    }
+
+    if ( !window.requestAnimationFrame ) {
+        window.requestAnimationFrame = function ( callback, element ) {
+            var currTime = Date.now(), timeToCall = Math.max( 0, frame_time - ( currTime - lastTime ) );
+            var id = window.setTimeout( function() { callback( currTime + timeToCall ); }, timeToCall );
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+    }
+
+    if ( !window.cancelAnimationFrame ) {
+        window.cancelAnimationFrame = function ( id ) { clearTimeout( id ); };
+    }
+
+}() );
+
 var socket = io();
 var canvas = document.getElementById('gameField');
 var context = canvas.getContext('2d');
@@ -54,12 +89,24 @@ socket.on('confirm join', function(initialDirection){
 socket.on('game over', function(){
     $("#gameover").fadeIn(3000);
 
-    setTimeout(function(){
-    context.fillStyle = "black";
-    context.globalAlpha = 0.4;
-    context.fillRect(0,0,600,600);
-    context.globalAlpha = 1;
-  }, 1000);
+    var nextTime = new Date().getTime();
+    var alpha = 0;
+    var pace = 1000;
+    function fade(){
+      if(new Date().getTime() > nextTime){
+        nextTime = new Date().getTime() + pace;
+       
+        if(alpha < 0.5){
+            alpha = (alpha * 100 + 1)/100;
+        }
+      }
+      context.fillStyle = "black";
+      context.globalAlpha = alpha;
+      context.fillRect(0,0,600,600);
+      requestAnimationFrame(fade);
+    }
+
+    fade();
 });
 
 // when player hits a key, combine the current and the keypress
