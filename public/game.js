@@ -79,8 +79,11 @@ socket.on('incoming data', function(data){
   if(data != undefined) {
     resetCanvas();
     // render the food
+
+    console.log("THE FOOD is " + JSON.stringify(data.food));
     if(data.food != undefined){
-      display(data.food, data.food.color);
+    
+      display(data.food.coordinate, data.food.color);
     }
     // render the players
     for(var player in data.players){

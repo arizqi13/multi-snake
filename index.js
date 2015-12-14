@@ -54,8 +54,8 @@ function go() {
   //console.log(board);
   collision();
   gameOver();
-  // spawnFood();
-  // eat();
+  spawnFood();
+  eat();
   move();
   io.emit('incoming data', myJson);
 }
@@ -452,6 +452,7 @@ function updateBoardAfterMove(playerCoords, playerID) {
   }
 }
 
+
 // checks the heads of the snakes against the 
 // location of the food.
 // increments the player's lengthBuffer
@@ -459,34 +460,37 @@ function updateBoardAfterMove(playerCoords, playerID) {
 // This comes after collision(), so only one snake
 // can possibly eat the food
 function eat() {
-  var all = myJson.players;
-  var id;
-  var foodCoordinate = JSON.stringify(FOOD);
-  var snake = board[foodCoordinate];
-  if (snake == undefined || snake == null || snake.length == 0) {
-    return;
-  } else {
-    all[snake[0]['id']].lengthBuffer++;
-    FOOD = null;
-  }
+	var all = myJson.players;
+	var id;
+	var foodCoordinate = JSON.stringify(myJson.food.coordinate);
+	var snake = board[foodCoordinate];
+	if (snake == undefined || snake == null	|| snake.length == 0) {
+		return;
+	} else {
+		all[snake[0]['id']].lengthBuffer++;
+		myJson.food.coordinate = null;
+	}
 
-  // check the food coordinate in the board
-  // for (id in all) {
-  //  var player = all[id];
-  //  var head = player.coordinate[0];
-  //  if (head.x == FOOD.x && head.y == FOOD.y) {
-  //    player.lengthBuffer++;
-  //    food = null;
-  //    return;
-  //  }
-  // }
+	// check the food coordinate in the board
+	// for (id in all) {
+	// 	var player = all[id];
+	// 	var head = player.coordinate[0];
+	// 	if (head.x == FOOD.x && head.y == FOOD.y) {
+	// 		player.lengthBuffer++;
+	// 		food = null;
+	// 		return;
+	// 	}
+	// }
 }
 
+var FOOD_COLOR = "cyan";
 function spawnFood() {
-  // TODO: maxX and maxY subject to change
-  if (FOOD == null || FOOD == undefined) {
-    FOOD = findOpenSquare(0, maxX - 1, 0, maxY - 1);
-  }
+	// TODO: maxX and maxY subject to change
+	if (myJson.food == null || myJson.food == undefined) {
+		myJson.food = {};
+		myJson.food["coordinate"] = findOpenSquare(0, maxX - 1, 0, maxY - 1);
+		myJson.food["color"] = FOOD_COLOR;
+	}
 }
 
 // Finds a coordinate position not currently
