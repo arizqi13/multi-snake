@@ -125,6 +125,14 @@ function render(color, coordinates){
   for(var i in coordinates){
     display(coordinates[i], color);
   }
+
+  context.font = "8px Courier New";
+  var xPos = coordinates[0].x *gridSize,
+      yPos = coordinates[0].y * gridSize -3;
+
+  xPos += (client.direction === "right") ? -15 : 10;
+  context.fillText(client.nickName, xPos, yPos);
+
 }
 
 // plot a cell on canvas using the given coordinate obj {x:y} and color
