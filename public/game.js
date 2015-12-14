@@ -114,14 +114,14 @@ socket.on('incoming data', function(data){
         gameInfo.scoreBoard = data.scoreBoard;
         displayScoreBoard(gameInfo);
       }
-      render(data.players[player].color, data.players[player].coordinate);
-      console.log("id:"+client.id+"\t nick:"+client.snickName);
+      render(data.players[player].color, data.players[player].coordinate, data.players[player].nickname);
+      console.log("id:"+client.id+"\t nick:"+client.nickName);
     }
   }
 });
 
 // take a coordinate array of a player, and color to render a snake
-function render(color, coordinates){
+function render(color, coordinates, nick){
   for(var i in coordinates){
     display(coordinates[i], color);
   }
@@ -131,7 +131,7 @@ function render(color, coordinates){
       yPos = coordinates[0].y * gridSize -3;
 
   xPos += (client.direction === "right") ? -15 : 10;
-  context.fillText(client.nickName, xPos, yPos);
+  context.fillText(nick, xPos, yPos);
 
 }
 
