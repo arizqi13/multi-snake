@@ -14,16 +14,17 @@ var FOOD_COLOR = 'brown';
 
 var INTERVAL = 70;
 
-/*// Sample Json format
-// var myJson = {"players": {
-//  "id1": {nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2},{"x":1,"y":2}], "direction":"up", "lengthBuffer":2},
-//  "id2": {"nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2}], "direction":"left", "lengthBuffer":0}
-//  }
-//  "food": {"x":x, "y":y, "color": color},
-//	"scoreBoard": [
-//		{nick: 'score'}, ..., {nick: 'score'}	
+/*
+Sample Json format
+ var myJson = {"players": {
+  "id1": {nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2},{"x":1,"y":2}], "direction":"up", "lengthBuffer":2},
+  "id2": {"nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2}], "direction":"left", "lengthBuffer":0}
+  }
+  "food": {"x":x, "y":y, "color": color},
+	"scoreBoard": [
+	{nick: 'score'}, ..., {nick: 'score'}	
 	],
-// };
+ };
 */
 
 // Sample board format
@@ -50,19 +51,13 @@ var tempNick;
 var tempColorIndex;
 var tempID;
 
-//initBoard(); // lots of calls to board without initializing
-// if it's undefined. I do this. EZ fix sets all possible
-// coordinates to []. 
-
 setInterval(go, INTERVAL);
 
 function go() {
   if(!Object.keys(myJson.players).length){
    return;
   }
-  //console.log(myJson.players);
   updateBoard();
-  //console.log(board);
   collision();
   gameOver();
   spawnFood();
@@ -90,7 +85,7 @@ app.get('/game.html', function(req, res) {
 io.sockets.on('connection', function(socket){
   console.log('connected to client:' + socket.id);
   var currentClient = socket.id;
-  //console.log("tempID:" + tempID);
+ 
   // Assign an id for the new user
   socket.on('join', function(clientData){
 
@@ -167,9 +162,6 @@ function pickColor(){
   return "pupple";
 }
 
-//TODO:
-//Movement, and broadcast data to clients every 60 ms
-
 function gameOver(){
   // base on the diePlayer array to remove death players from myJson
   // add the color back to availableColors
@@ -192,18 +184,7 @@ function gameOver(){
     diePlayer = [];
   }
 }
-// add a snake to the board
-function addNewSnakeToBoard(userID, coordinates){
-  for(var i in coordinates){
-    if(board[coordinates[i]].length == 0)
-      board[coordinates[i]] = {'id':userID, 'bodyNum': i};
-    else
-      board[coordinates[i]].push({'id':userID, 'bodyNum': i});
-  }
-}
 
-/////////////////////////////////////////////////////////
-// Alfian's space
 
 // Check collision. The board must be up to date and reflects the current position
 // of all snakes
@@ -227,14 +208,11 @@ function collision() {
       continue;
     }
 
-    // TODO: change board to the correct variable name
     var square = board[JSON.stringify(head)].slice();
     // This location should at least have this snake's head
     // if > 1, collision with player happen
     if (square.length > 1) {
       // TODO: update for >2 players collision
-      //console.log(square);
-      //console.log(id);
 
       var enemy;
       for (var i = 0; i < square.length; i++) {
@@ -263,10 +241,10 @@ function collision() {
         // skip this player, has died
         continue;
       }
-      // var enemy = square.splice(0, 0)[0];
+
       var enemyBody = all[enemy.id].coordinate;
-      //console.log(enemyBody);
       var eaten = enemyBody.length - enemy.bodyNum;
+
       if (eaten >= player.coordinate.length) {
         // gameOver(id);
         diePlayer.push(id);
@@ -283,7 +261,6 @@ function collision() {
         }
         player.lengthBuffer += eaten;
         if (eaten == enemyBody.length) {
-          // gameOver(enemy.id);
           diePlayer.push(enemy.id);
         } else {
           all[enemy.id].coordinate = enemyBody.slice(0, enemy.bodyNum);
@@ -298,13 +275,9 @@ function updateBoard() {
   var all = myJson.players;
   board = {};
   var id;
-  // console.log(all);
   for (id in all) {
     var player = all[id].coordinate;
 
-  // console.log("gameboard");
-
-    // update game board
     for (var i = 0; i < player.length; i++) {
       var location = JSON.stringify(player[i]);
 
@@ -314,12 +287,8 @@ function updateBoard() {
       board[location].push({'id': id, 'bodyNum': i});
     }
 
-  // console.log("scoreboard");
-
     // update direction
 	var arr = directionBuffer[id];
-	// console.log(arr);
-
 	if (arr && arr.length > 0) {
 		myJson.players[id].direction = arr.shift();
 	}
@@ -348,10 +317,7 @@ function updateBoard() {
     }
   }
 
-  // console.log(myJson.scoreBoard);
 }
-//////////////////////////////////////////////////////////
-// Tad's space
 
 // finds a horizontal position on the board at least SPAWN_LEN long.
 // Will never spawn head closer than SPAWN_LEN squares away from wall
@@ -453,31 +419,12 @@ function move() {
     else if(d == "left") nx--;
     else if(d == "up") ny--;
     else if(d == "down") ny++;
-    // var toRemoveFromBoard;
-    // var toAddToBoard;
+
     // make the tail the new head
     if (player.lengthBuffer == undefined || player.lengthBuffer == 0) {
-      //console.log("THE X IS " + nx);
       player.coordinate.pop();
       
-      // toRemoveFromBoard = JSON.stringify(snakeTail);
-      // var tempArray = board[toRemoveFromBoard];
-      // // Remove old tail from the board
-      // for(var i in tempArray){
-      //  if(tempArray[i].id == id){
-      //    tempArray.splice(i,1);
-      //    break;
-      //  }
-      // }
-
-      // board[toRemoveFromBoard] = tempArray;
-
-      // snakeTail.x = nx;
-      // snakeTail.y = ny;
       player.coordinate.unshift({x: nx, y: ny});
-
-      // toAddToBoard = JSON.stringify(snakeTail);
-
 
     // make a new head and unshift onto the player.coordinate array
     } else {
@@ -488,12 +435,7 @@ function move() {
       };
       player.coordinate.unshift(newHead);
 
-      //console.log(player.coordinate);
-      // toAddToBoard = JSON.stringify(newHead);
     }
-    // updateBoardAfterMove(player.coordinate, id);
-
-    // board[toAddToBoard].unshift({id:id, bodyNum:0});
   }
 }
 
@@ -524,43 +466,30 @@ function eat() {
 	var id;
 	var foodCoordinate = JSON.stringify(myJson.food.coordinate);
 	var snake = board[foodCoordinate];
-		//console.log(snake);
+
 	if (snake == undefined || snake == null	|| snake.length == 0) {
 		return;
 	} else {
-		//console.log(all[snake[0].id].coordinate);
-		all[snake[0].id].lengthBuffer+=10;
+		// since we make sure to spawn food in a free area, eating can only be
+		// done from head
+		all[snake[0].id].lengthBuffer++;
 		myJson.food.coordinate = null;
 	}
-
-	// check the food coordinate in the board
-	// for (id in all) {
-	// 	var player = all[id];
-	// 	var head = player.coordinate[0];
-	// 	if (head.x == FOOD.x && head.y == FOOD.y) {
-	// 		player.lengthBuffer++;
-	// 		food = null;
-	// 		return;
-	// 	}
-	// }
 }
 
 function spawnFood() {
-	// TODO: maxX and maxY subject to change
 	if (!myJson.food.coordinate) {
-		// myJson.food = {};
 		myJson.food["coordinate"] = findOpenSquare(0, maxX - 1, 0, maxY - 1);
-		// myJson.food["color"] = FOOD_COLOR;
 	}
 }
 
 // Finds a coordinate position not currently
 // occupied by a player's snake and returns it as an object
 // with an x and y field. 
-// TODO: ASSUMES maxX and maxY are exclusive. ie. will NEVER
+// maxX and maxY are exclusive. ie. will NEVER
 // return {x:max, y:max}
 function findOpenSquare(minimumX, maximumX, minimumY, maximumY) {
-  // TODO: the global variables maxX maxY and board might
+  // the global variables maxX maxY and board might
   // have been changed since this was written. Also maxX/maxY
   // is a value that does exist in the board, not one past the edge
   while (true) {
