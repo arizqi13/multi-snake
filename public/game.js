@@ -17,10 +17,13 @@ var scoreDiv = $('#score');
 
 // request to join the game, starts when load the page
 $(document).ready(function(){
+  $('#photos').hide();
   signUpDiv.show();
   gameBoardDiv.hide();
   controlsDiv.hide();
   scoreDiv.hide();
+
+  $('#photos').fadeIn(1000).fadeOut(4500);
 });
 
 $('#join').click(function(){
@@ -196,16 +199,16 @@ function sendKey(key){
 var imgs = ['images/1.jpg', 'images/2.jpg', 'images/3.jpg', 'images/4.png', 'images/5.png'];
 $(function() {
   var i = 0;
-  $('#photos').fadeOut(4500);
+  // $('#photos').fadeOut(4500);
   setInterval(function() {
     $('#photos').attr('src',imgs[i])
-      .fadeIn(500)
+      .fadeIn(1000)
       .fadeOut(4500)
       if(i == imgs.length-1) {
         i = 0;
       } else {
         i++;
       }
-  },  5000);
+  },  5500);
 
 });
