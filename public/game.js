@@ -37,6 +37,7 @@ var socket = io();
 var canvas = document.getElementById('gameField');
 var context = canvas.getContext('2d');
 var gridSize = 6;
+var die = false;
 
 // an object stores basic info of player: id, nickName, current direction
 var client = {};
@@ -89,6 +90,7 @@ socket.on('confirm join', function(initialDirection){
 socket.on('game over', function(){
     $("#gameover").fadeIn(3000);
 
+    die = true;
     var nextTime = new Date().getTime();
     var alpha = 0;
     var pace = 1000;
@@ -96,10 +98,14 @@ socket.on('game over', function(){
       if(new Date().getTime() > nextTime){
         nextTime = new Date().getTime() + pace;
        
-        if(alpha < 0.5){
-            alpha = (alpha * 100 + 1)/100;
+        if(alpha > 0.5){
+          alpha = 0;
         }
+        
+        alpha = (alpha * 100 + 1)/100;
+        
       }
+
       context.fillStyle = "black";
       context.globalAlpha = alpha;
       context.fillRect(0,0,600,600);
@@ -150,7 +156,7 @@ $('#rightKey').click(function() {
 
 // receive updates from the server, use this to render the snakes and food
 socket.on('incoming data', function(data){
-  if(data != undefined) {
+  if(data != undefined && !die) {
     resetCanvas();
     // render the food
     if(data.food != undefined){
