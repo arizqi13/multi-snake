@@ -40,7 +40,8 @@ myJson.food = {coordinate:null, color: FOOD_COLOR};
 myJson.scoreBoard = [
 	{'xxx':4},{'xxx':3},{'xxx':2},{'xxx':1},{'xxx':0}
 ];
-var availableColors = ["black","red","orange","green","blue"];
+var availableColors = ["purple","red","orange","green","blue", "aqua", "#5F9EA0", "#DC143C", "#B8860B", 
+                        "#FF1493", "#B22222", "#008080", "#FA8072"];
 var colorInUsed = [];
 var diePlayer = [];
 var directionBuffer = {};
@@ -164,7 +165,7 @@ function pickColor(){
     colorInUsed.push(color);
     return color;
   }
-  return "pupple";
+  return "black";
 }
 
 //TODO:

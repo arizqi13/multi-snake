@@ -21,8 +21,7 @@ canvas {
 }
 
 #score {
-	background-color: pink;
-	color: red;
+	color: #6A5ACD;
 	background-color: white;
 }
 
@@ -58,6 +57,11 @@ table {
 	font-size: 15pt;
 }
 
+th, td, tr {
+	padding: 15px;
+    text-align: center;
+}
+
 button {
 	color: black;
 }
@@ -68,4 +72,5 @@ button {
 	border: solid 1px white;
 	border-radius: 10px;
 }
+
 

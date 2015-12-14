@@ -135,12 +135,14 @@ function display(coordinate, color) {
 function displayScoreBoard(data){
   if(data){
     var playerInfo = $('#playerInfo');
-    playerInfo.text(data.nickName + ' (' + data.size + ')');
+    playerInfo.empty();
+    playerInfo.append('<span>&#8718;</span> ' + data.nickName + ' (' + data.size + ')');
     playerInfo.css("color", data.color);
 
     var scoreList = $('#scoreList');
     scoreList.empty();
-    scoreList.append('<tr><th>Player</th><th>score</th></tr>');
+    scoreList.append('<tr><td colspan="2"><b><u>Highest Scores</u><b></td></tr>')
+    scoreList.append('<tr><th>Player</th><th>Score</th></tr>');
     for(var i in data.scoreBoard) {
       var cur = Object.keys(data.scoreBoard[i])[0];
       scoreList.append('<tr><td>' + cur + '</td><td> ' + data.scoreBoard[i][cur] + '</td></tr>');
@@ -194,10 +196,11 @@ function sendKey(key){
 var imgs = ['images/1.jpg', 'images/2.jpg', 'images/3.jpg', 'images/4.png', 'images/5.png'];
 $(function() {
   var i = 0;
+  $('#photos').fadeOut(4500);
   setInterval(function() {
     $('#photos').attr('src',imgs[i])
-      .fadeIn(600)
-      .fadeOut(4400)
+      .fadeIn(500)
+      .fadeOut(4500)
       if(i == imgs.length-1) {
         i = 0;
       } else {
