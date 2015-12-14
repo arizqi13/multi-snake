@@ -196,3 +196,21 @@ function sendKey(key){
     socket.emit('key',data);
   }
 }
+
+
+// Slideshow for front page
+var imgs = ['images/1.jpg', 'images/2.jpg', 'images/3.jpg', 'images/4.png', 'images/5.png'];
+$(function() {
+  var i = 0;
+  setInterval(function() {
+    $('#photos').attr('src',imgs[i])
+      .fadeIn(600)
+      .fadeOut(4400)
+      if(i == imgs.length-1) {
+        i = 0;
+      } else {
+        i++;
+      }
+  },  5000);
+
+});

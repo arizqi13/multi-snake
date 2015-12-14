@@ -61,3 +61,11 @@ table {
 button {
 	color: black;
 }
+
+#photos {
+	width: 500px;
+	height: 500px;
+	border: solid 1px white;
+	border-radius: 10px;
+}
+
