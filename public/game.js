@@ -135,17 +135,15 @@ function display(coordinate, color) {
 function displayScoreBoard(data){
   if(data){
     var playerInfo = $('#playerInfo');
-    playerInfo.text(data.nickName + ' ' + data.size);
+    playerInfo.text(data.nickName + ' (' + data.size + ')');
     playerInfo.css("color", data.color);
 
-    var highScore = $('#highScore');
-    var topPlayer = Object.keys(data.scoreBoard[0])[0];
-    highScore.text(topPlayer + ' ' + data.scoreBoard[0][topPlayer]);
     var scoreList = $('#scoreList');
     scoreList.empty();
-    for(var i = 1  in data.scoreBoard) {
+    scoreList.append('<tr><th>Player</th><th>score</th></tr>');
+    for(var i in data.scoreBoard) {
       var cur = Object.keys(data.scoreBoard[i])[0];
-      scoreList.append('<li>' + cur + ' ' + data.scoreBoard[i][cur] + '</li>');
+      scoreList.append('<tr><td>' + cur + '</td><td> ' + data.scoreBoard[i][cur] + '</td></tr>');
     }
 
 
