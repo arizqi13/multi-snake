@@ -14,13 +14,17 @@ var maxY = MAX_HEIGHT/gridSize;
 var FOOD = null;
 var FOOD_COLOR = 'brown';
 
-// Sample Json format
+/*// Sample Json format
 // var myJson = {"players": {
 //  "id1": {nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2},{"x":1,"y":2}], "direction":"up", "lengthBuffer":2},
 //  "id2": {"nickname" : "nickname", "color" : "color", "coordinate":[{"x":1,"y":2}], "direction":"left", "lengthBuffer":0}
 //  }
-//  "food": {"x":x, "y":y, "color": color}
+//  "food": {"x":x, "y":y, "color": color},
+//	"scoreBoard": [
+//		{nick: 'score'}, ..., {nick: 'score'}	
+	],
 // };
+*/
 
 // Sample board format
 // {"{"x":1,"y":2}":[{'id':id, 'bodyNum': 0}], "{"x":2,"y":2}":[{'id':id, 'bodyNum': 0}]}
@@ -33,6 +37,9 @@ var myJson = {};
 var board = {};
 myJson["players"] = {};
 myJson.food = {coordinate:null, color: FOOD_COLOR};
+myJson.scoreBoard = [
+	{'xxx':0},{'xxx':0},{'xxx':0},{'xxx':0},{'xxx':0}
+];
 var availableColors = ["black","red","orange","green","blue"];
 var colorInUsed = [];
 var diePlayer = [];
@@ -286,6 +293,7 @@ function updateBoard() {
   for (id in all) {
     var player = all[id].coordinate;
 
+    // update game board
     for (var i = 0; i < player.length; i++) {
       var location = JSON.stringify(player[i]);
 
@@ -294,9 +302,24 @@ function updateBoard() {
       }
       board[location].push({'id': id, 'bodyNum': i});
     }
-  }
-}
 
+    // update score board
+    var scb = myJson.scoreBoard;
+    for (var i = 0; i < myJson.scoreBoard.length; i++) {
+    	var oldVal = scb[i];
+    	console.log(oldVal);
+    	if (player.length >= oldVal[Object.keys(oldVal)]) {
+    		scb.pop();
+    		var newScore = {};
+    		newScore[all[id].nickname] = player.length;
+    		scb.splice(i, 0, newScore);
+    		break;
+    	}
+    }
+  }
+
+  console.log(myJson.scoreBoard);
+}
 //////////////////////////////////////////////////////////
 // Tad's space
 
