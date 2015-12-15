@@ -474,7 +474,9 @@ function eat() {
 	} else {
 		// since we make sure to spawn food in a free area, eating can only be
 		// done from head
-		all[snake[0].id].lengthBuffer++;
+		if(all[snake[0].id]){
+			all[snake[0].id].lengthBuffer++;
+		}
 		myJson.food.coordinate = null;
 	}
 }
