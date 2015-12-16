@@ -147,7 +147,10 @@ io.sockets.on('connection', function(socket){
   // When the user disconnect
   socket.on('disconnect', function(){
     console.log('disconnect user: ' + socket.id);
-    delete myJson.players[socket.clientID];
+    if (myJson.players[socket.clientID]) {
+      availableColors.push(myJson.players[socket.clientID].color);
+      delete myJson.players[socket.clientID];
+    }
     console.log('removed user data');
   });
 });
