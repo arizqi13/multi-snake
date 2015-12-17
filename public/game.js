@@ -97,7 +97,7 @@ socket.on('confirm join', function(initialDirection){
     gameBoardDiv.show();
     scoreDiv.show();
 		messageList.show();
-	
+		resetCanvas();	
     if($('#useOnScreen').is(':checked')){
       controlsDiv.show();
     }
@@ -196,13 +196,13 @@ socket.on('incoming data', function(data){
         var gameInfo = {};
         gameInfo.nickName = data.players[player].nickname;
         gameInfo.color = data.players[player].color;
-        gameInfo.size = data.players[player].coordinate.length;
+       	gameInfo.size = data.players[player].coordinate.length;
         gameInfo.scoreBoard = data.scoreBoard;
         displayScoreBoard(gameInfo);
       }
       var p = data.players[player];
       render(p.color, p.coordinate, p.nickname);
-      console.log("id:"+client.id+"\t nick:"+client.snickName);
+      console.log("id:"+client.id+"\t nick:"+client.nickName);
     }
   }
 });
@@ -232,10 +232,12 @@ function render(color, coordinates, nick){
 
 // plot a cell on canvas using the given coordinate obj {x:y} and color
 function display(coordinate, color) {
-  context.fillStyle = color;
-  context.fillRect(coordinate.x * gridSize, coordinate.y * gridSize, gridSize, gridSize);
-  context.strokeStyle = "white";
-  context.strokeRect(coordinate.x * gridSize, coordinate.y * gridSize, gridSize, gridSize);
+  if(coordinate) {
+		context.fillStyle = color;
+  	context.fillRect(coordinate.x * gridSize, coordinate.y * gridSize, gridSize, gridSize);
+  	context.strokeStyle = "white";
+  	context.strokeRect(coordinate.x * gridSize, coordinate.y * gridSize, gridSize, gridSize);
+	}
 }
 
 function displayScoreBoard(data){
