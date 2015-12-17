@@ -83,3 +83,20 @@ button {
 	color: red;
 }
 
+#msgList {
+	background-color: white;
+	color: black;	
+}
+
+li {
+	list-style-type: none;
+}
+
+ul {
+	padding: 0px;
+}
+
+.nickName {
+	font-weight: bold;
+	color: red;
+}

@@ -50,6 +50,8 @@ var signUpDiv = $('#signUp');
 var gameBoardDiv = $('#gameBoard');
 var controlsDiv = $('#controls');
 var scoreDiv = $('#score');
+var gameOverDiv = $('#gameover');
+var messageList = $('#msgList');
 
 // request to join the game, starts when load the page
 $(document).ready(function(){
@@ -59,7 +61,8 @@ $(document).ready(function(){
   gameBoardDiv.hide();
   controlsDiv.hide();
   scoreDiv.hide();
-
+	messageList.hide();	
+	
   $('#photos').fadeIn(1000).delay(500).fadeOut(4500);
 });
 
@@ -72,18 +75,42 @@ $('#join').click(function(){
   }
 });
 
+// Send massage
+$('#msgSend').click(function(){
+	var input = $('#m').val();
+	if(input != '' && client.nickName != null){
+		var msg = {};
+		msg.nickName = client.nickName;
+		msg.msg = input;
+		$('#m').val('');
+		socket.emit('message', msg);
+	}
+});
+
 // receive the player's info from the server, use this to set diretion for
 // client object
 socket.on('confirm join', function(initialDirection){
   if(initialDirection != undefined){
     client.direction = initialDirection;
     signUpDiv.hide();
+		gameOverDiv.hide();
     gameBoardDiv.show();
     scoreDiv.show();
+		messageList.show();
+	
     if($('#useOnScreen').is(':checked')){
       controlsDiv.show();
     }
   }
+});
+
+// receive message from server
+socket.on('incoming message', function(msg){
+	if(msg){
+		var text = '<span class="nickName">' + msg.nickName + ':</span>' + msg.msg;
+		// append new message to list
+		$('#messages').append($('<li>' + text + '</li>')); 
+	}
 });
 
 // receive game over signal
@@ -178,6 +205,14 @@ socket.on('incoming data', function(data){
       console.log("id:"+client.id+"\t nick:"+client.snickName);
     }
   }
+});
+
+// when user restart with the old username
+$('#replay').click(function(){
+	var data = {};
+	data.nickName = client.nickName;
+	data.id = newID();
+	socket.emit('join', data);
 });
 
 // take a coordinate array of a player, and color to render a snake

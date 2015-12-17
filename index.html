@@ -21,6 +21,7 @@
       <div id="slideshow"><br><br><img id="photos" src="images/5.png"></div>
     </div>
     <div class="container-fluid row">
+		<!--
       <div id="controls" class="col-lg-2 vcenter">
         <div class="container-fluid">
           <div class="row">
@@ -39,12 +40,18 @@
             <div class="col-sm-4"></div>
           </div>
         </div>
+			</div>
+-->
+			<div id="msgList" class="col-lg-2 vcenter" style="text-align:center;">
+				<ul id="messages"></ul>   
+      		<input id="m" autocomplete="off" /><button id="msgSend" >Send</button>
       </div><!--
     --><div id="gameBoard" class="col-lg-8 vcenter">
           <canvas id="gameField" width="600px" height="600px"></canvas>
           <div id="gameover">
             <p>! Game over !</p>
-            <a href="">Replay</a>
+            <p><a id="replay">Replay</a></p>
+						<p><a href="">Start New Game</a></p>
           </div>
           <form method="get" action="/">
             <button type="submit">Restart</button>

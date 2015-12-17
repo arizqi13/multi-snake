@@ -144,6 +144,17 @@ io.sockets.on('connection', function(socket){
     }
   });
 
+	// When client sends a message to message list
+  socket.on('message',function(msg){
+		if(msg){
+			var toBroadcast = {};
+			toBroadcast.nickName = msg.nickName;
+			toBroadcast.msg = msg.msg;
+			// broadcast the message to all the players
+			io.emit('incoming message',toBroadcast);
+		}
+  });
+
   // When the user disconnect
   socket.on('disconnect', function(){
     console.log('disconnect user: ' + socket.id);
